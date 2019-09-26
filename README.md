@@ -6,7 +6,7 @@ Le canevas du projet implémenant la structure de données GMap sont dans le ré
 Les spécifications de la structure sont dans le fichier ```gmap.hpp```. Les fonctions a compléter sont dans ```gmap.cpp```. Les fonctions déja implémentées sont dans ```gmap_helper.cpp```. La fonction d'affichage (inspirée du TP précédent) est dans le fichier ```gmap_display.cpp```. Le fichier de test des différentes fonctions s'appelle ```gmap_main.cpp```. Ses fonctions sont nommées ```questionX``` et correspondent aux exercices qui suivent. Pour les tester, il suffit de les appeler dans la fonction ```main``` à la fin du fichier  ```gmap_main.cpp```.
 
 
-1/ Implémenter une structure de 2-G-carte.
+1/ La structure de 2-G-carte.
 ------------------------------------------
 Cette GMap sera encodée en représentant chaque brin par un identifiant.
 Chaque relation alpha (0, 1 et 2) sera codée par un dictionnaire (dict). 
@@ -87,9 +87,9 @@ Complétez les fonctions suivantes dans le fichier ```gmap.cpp```
     bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
 ```
 
-Une fois completer, vous pouvez tester cette structure avec la function ```question1``` du fichier ```gmap_main.cpp```.
+Une fois completée, vous pouvez tester cette structure avec la function ```question1``` du fichier ```gmap_main.cpp```.
 
-2/ Encoder les parcours de la structure
+2/ Les parcours de la structure
 ------------------------------------------
 
 Complétez les fonctions de parcours par calcul d'orbite.
@@ -167,7 +167,7 @@ GMap::idlist_t GMap::elements( degree_t degree) {
 
 Vous pouvez tester cette structure avec la fonction ```question2```.
 
-3/ Encoder le plongement géométrique
+3/ Le plongement géométrique
 ------------------------------------------
 
 La classe GMap est sous classée en GMap3D pour intégrer le plongement géométrique.
@@ -247,7 +247,7 @@ Canvas
 ```
 Vous pourrez tester cela avec la fonction ```question3``` qui associe des coordonnées aux sommets d'un carré.
 
-4/ Coder la fonction de couture qui permet de lier deux éléments de degrée ‘degree’. 
+4/ La couture permettant de lier deux éléments de degrée ‘degree’. 
 ------------------------------------------------------------------------------------
 
 Si vous liez deux brins par alpha_2, il faut aussi lier leurs images par alpha_0 pour satisfaire la contrainte que alpha_2(alpha_0) est une involution. La même chose pour lier par alpha_0, il faut également lier les images par alpha_2. Si le lien est fait par alpha_1, aucune contrainte s'applique. Il faut juste lier les brins.
@@ -280,7 +280,7 @@ Canvas:
 
 Vous pouvez maintenant tester la création d'un cube et d'un cube troué (holeshape) avec les fonctions ```question4a``` et ```question4b```.
 
-5/ Coder une fonction qui calcule la caractéristique d’Euler-Poincaré (S-A+F)
+5/ Caractéristique d’Euler-Poincaré (S-A+F)
 ------------------------------------------------------------------------------------
 
 Complétez la fonction qui calcule la caractéristique d'Euler-Poincaré
@@ -296,7 +296,7 @@ Canvas:
 Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```question5```.
 
 
-6/ Visualiser les objets
+6/ Visualisation
 ------------------------------------------
 Complétez la fonction ```display``` du ficher ```gmap_display.cpp``` permettant de visualiser la carte simplement comme un ensemble de faces.
 
@@ -317,7 +317,7 @@ A noter  que les faces dans les exemples sont des quadrilatère qu'il vous faudr
 Vous pourrez alors tester la visualization du cube et du cube troué avec ```question6a``` et ```question6b```. 
 
 
-7/ Coder une fonction qui calcule le dual d’une 2-G-Carte.
+7/ Le dual d’une 2-G-Carte.
 ------------------------------------------------------------------------------------
 
 ```c++
@@ -345,8 +345,8 @@ Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```
 8/ Comparaison avec des structures alternatives
 ------------------------------------------------------------------------------------
 
-Evaluer les changements necessaires pour encoder une simple 2-Carte.
+Evaluez les changements necessaires pour encoder une simple 2-Carte.
 Qu'est ce que vous y gagneriez ? perdriez ?
 
-Comparer cette structure avec une structure Half-Edge ? Avec une simple liste de points indexés ?
+Comparez cette structure avec une structure Half-Edge ? Avec une simple liste de points indexés ?
 
