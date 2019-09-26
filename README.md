@@ -1,7 +1,7 @@
 Cartes Combinatoires
 ======================
 
-Le canevas du projet implémenant la structure de données GMap sont dans le répertoire src. Comme les TPs précédents pour compiler le projet, dézippez le, créez un répertoire build et utilisez ```cmake ..```.
+Le canevas du projet implémenant la structure de données GMap est dans le répertoire src. Comme les TPs précédents pour compiler le projet, dézippez le, créez un répertoire build et utilisez ```cmake ..```.
 
 Les spécifications de la structure sont dans le fichier ```gmap.hpp```. Les fonctions a compléter sont dans ```gmap.cpp```. Les fonctions déja implémentées sont dans ```gmap_helper.cpp```. La fonction d'affichage (inspirée du TP précédent) est dans le fichier ```gmap_display.cpp```. Le fichier de test des différentes fonctions s'appelle ```gmap_main.cpp```. Ses fonctions sont nommées ```questionX``` et correspondent aux exercices qui suivent. Pour les tester, il suffit de les appeler dans la fonction ```main``` à la fin du fichier  ```gmap_main.cpp```.
 
