@@ -1,16 +1,16 @@
 Cartes Combinatoires
 ======================
 
-Le canevas du projet implémenant la structure de données GMap sont dans le répertoire src. 
+Le canevas du projet implémenant la structure de données GMap sont dans le répertoire src. Comme les TPs précédents pour compiler le projet, dézippez le, créez un répertoire build et utilisez ```cmake ..```.
 
-Les spécifications de la structure sont dans le fichier gmap.hpp. Les fonctions a compléter sont dans gmap.cpp. Les fonctions déja implémentées sont dans gmap_helper.cpp. La fonction d'affichage (inspirée du TP précédent) est dans le fichier gmap_display.cpp. Le fichier de test des différentes fonctions s'appelle gmap_main.cpp. 
+Les spécifications de la structure sont dans le fichier ```gmap.hpp```. Les fonctions a compléter sont dans ```gmap.cpp```. Les fonctions déja implémentées sont dans ```gmap_helper.cpp```. La fonction d'affichage (inspirée du TP précédent) est dans le fichier ```gmap_display.cpp```. Le fichier de test des différentes fonctions s'appelle ```gmap_main.cpp```. Ses fonctions sont nommées ```questionX``` et correspondent aux exercices qui suivent. Pour les tester, il suffit de les appeler dans la fonction ```main``` à la fin du fichier  ```gmap_main.cpp```.
 
 
 1/ Implémenter une structure de 2-G-carte.
 ------------------------------------------
-Cette GMap sera encoder en utilisant des identifiants pour chaque brin.
+Cette GMap sera encodée en représentant chaque brin par un identifiant.
 Chaque relation alpha (0, 1 et 2) sera codée par un dictionnaire (dict). 
-Etudier et completer si necessaire la structure suivante
+Etudiez et completez si necessaire la structure suivante
 
 ```c++
 class GMap {
@@ -57,7 +57,7 @@ protected:
 
 ```
 
-Compléter les fonctions suivantes dans le fichier gmap.cpp
+Complétez les fonctions suivantes dans le fichier ```gmap.cpp```
 
 ```c++
     // Return the application of the alpha_deg on dart
@@ -87,12 +87,12 @@ Compléter les fonctions suivantes dans le fichier gmap.cpp
     bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
 ```
 
-Une fois completer, vous pouvez tester cette structure avec la function question1 du fichier gmap_main.cpp et tester les fonctions questionX .
+Une fois completer, vous pouvez tester cette structure avec la function ```question1``` du fichier ```gmap_main.cpp```.
 
 2/ Encoder les parcours de la structure
 ------------------------------------------
 
-Compléter les fonctions de parcours par caclcul d'orbite.
+Complétez les fonctions de parcours par calcul d'orbite.
 
 ```c++
     /* 
@@ -142,7 +142,7 @@ Compléter les fonctions de parcours par caclcul d'orbite.
     */
 ```
 
-Cela permettra de faire marcher la fonction elements qui détermine les i-cellules de la carte.
+Cela permettra de faire marcher la fonction ```elements``` qui détermine les i-cellules de la carte.
 
 ```c++
 GMap::idlist_t GMap::elements( degree_t degree) {
@@ -165,12 +165,12 @@ GMap::idlist_t GMap::elements( degree_t degree) {
 }
 ```
 
-Vous pouvez tester cette structure avec la fonction question2.
+Vous pouvez tester cette structure avec la fonction ```question2```.
 
 3/ Encoder le plongement géométrique
 ------------------------------------------
 
-La classe GMap est sous classé en GMap3D pour intégrer le plongement géométrique.
+La classe GMap est sous classée en GMap3D pour intégrer le plongement géométrique.
 
 
 ```c++
@@ -229,9 +229,9 @@ public:
 };
 ```
 
-Implementer la fonction qui permet de determiner le brin qui contient l'information de plongement pour une i-cellule donné. Pour cela, il vous faut parcourir l'orbite de la i-cellule et vérifier si chaque brin n'a pas de valeur dans le dictionnaire de valeur de plongement.  Grace a cela, les fonctions get_position et set_position permettront d'associer une position à une 0-cellule.
+Implementer la fonction qui permet de determiner le brin qui contient l'information de plongement pour une i-cellule donnée. Pour cela, il vous faut parcourir l'orbite de la i-cellule et vérifier si chaque brin n'a pas de valeur dans le dictionnaire de valeur de plongement.  Grace a cela, les fonctions ```get_position``` et ```set_position``` permettront d'associer une position à une 0-cellule.
 
-A noter que cette fonction est dans le fichier gmap.hpp
+A noter que cette fonction est dans le fichier ```gmap.hpp```.
 
 ```c++
 template<class T>
@@ -245,12 +245,12 @@ Canvas
 }
 */
 ```
-Vous pourrez tester cela avec la fonction question3 qui associe des coordonnées aux sommets d'un carré.
+Vous pourrez tester cela avec la fonction ```question3``` qui associe des coordonnées aux sommets d'un carré.
 
 4/ Coder la fonction de couture qui permet de lier deux éléments de degrée ‘degree’. 
 ------------------------------------------------------------------------------------
 
-En effet si vous liez deux brins par alpha_2, il faut aussi lier leurs images par alpha_0 pour satisfaire la contrainte que alpha_2(alpha_0) est une involution. La même chose pour lier par alpha_0, il faut également lier les images par alpha_2. Si le lien est fait par alpha_1, pas de contrainte s'applique. Il faut juste lier les brins.
+Si vous liez deux brins par alpha_2, il faut aussi lier leurs images par alpha_0 pour satisfaire la contrainte que alpha_2(alpha_0) est une involution. La même chose pour lier par alpha_0, il faut également lier les images par alpha_2. Si le lien est fait par alpha_1, aucune contrainte s'applique. Il faut juste lier les brins.
 
 ```c++
 /*
@@ -278,12 +278,12 @@ Canvas:
 */
 ```
 
-Vous pouvez maintenant tester la création d'un cube et d'un cube troué (holeshape) avec les fonction question4a et question4b.
+Vous pouvez maintenant tester la création d'un cube et d'un cube troué (holeshape) avec les fonctions ```question4a``` et ```question4b```.
 
 5/ Coder une fonction qui calcule la caractéristique d’Euler-Poincaré (S-A+F)
 ------------------------------------------------------------------------------------
 
-Compléter la fonction qui calcule la caractéristique d'Euler-Poincaré
+Complétez la fonction qui calcule la caractéristique d'Euler-Poincaré
 ```c++
 // Compute the Euler-Poincare characteristic of the subdivision
 int GMap::eulercharacteristic()
@@ -293,18 +293,18 @@ Canvas:
     return S - A + F
 }
 ```
-Vous pourrez tester cette fonction sur la structure de cube avec la fonction question5.
+Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```question5```.
 
 
 6/ Visualiser les objets
 ------------------------------------------
-Compléter la fonction ```display``` du ficher gmap_display.cpp permettant de visualiser la carte simplement comme un ensemble de faces.
+Complétez la fonction ```display``` du ficher ```gmap_display.cpp``` permettant de visualiser la carte simplement comme un ensemble de faces.
 
 ```c++
 int display(const GMap3D& gmap)
 ```
 Il faut transformer la gmap en liste de sommet et d'indices. 
-A noter  que les faces dans les exemples sont des quadrilatère qu'il vous faudra transformer en triangle ([a,b,c,d] -> [a,b,c]+[a,c,d]). A noter également qu'il vous faut calculer les normales de chaque faces. La valeur de propriété de chaque vertex peut pour l'instant etre définie aléatoirement.
+A noter  que les faces dans les exemples sont des quadrilatère qu'il vous faudra transformer en triangle ([a,b,c,d] -> [a,b,c]+[a,c,d]). Chaque arête étant représenté par 2 brins, il ne faudra considérer qu'un brin sur 2 pour déterminer les positions. A noter également qu'il vous faut calculer les normales de chaque faces. La valeur de propriété de chaque vertex peut pour l'instant etre définie aléatoirement pour la visualisation.
 
 ```c++
     std::vector<unsigned short> indices; //Triangles concaténés dans une liste
@@ -314,7 +314,7 @@ A noter  que les faces dans les exemples sont des quadrilatère qu'il vous faudr
 ```
 
 
-Vous pourrez alors tester la visualization du cube et du cube troué avec question6a et question6b. 
+Vous pourrez alors tester la visualization du cube et du cube troué avec ```question6a``` et ```question6b```. 
 
 
 7/ Coder une fonction qui calcule le dual d’une 2-G-Carte.
@@ -340,9 +340,13 @@ Canvas:
 }
 ```
 
-Vous pourrez tester cette fonction sur la structure de cube avec la fonction question7.
+Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```question7```.
 
-8/ Evaluer les changements necessaires pour encoder une simple 2-Carte.
+8/ Comparaison avec des structures alternatives
 ------------------------------------------------------------------------------------
 
+Evaluer les changements necessaires pour encoder une simple 2-Carte.
 Qu'est ce que vous y gagneriez ? perdriez ?
+
+Comparer cette structure avec une structure Half-Edge ? Avec une simple liste de points indexés ?
+
