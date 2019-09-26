@@ -34,19 +34,19 @@ public:
         id_t values[3];
     };
 
-    // a type for list of id. usefull for processing
+    // a type for list of ids. usefull for processing
     typedef std::vector<id_t> idlist_t;
-    // a type for set of id . usefull to check if darts have already been processed. 
+    // a type for set of ids. usefull to check if darts have already been processed. 
     typedef std::unordered_set<id_t> idset_t;
-    // a type of list of degree
+    // a type of list of degrees
     typedef std::vector<degree_t> degreelist_t;
-    // a type of map of dart id to alpha values for this id.
+    // a type that maps a dart id to some alpha values.
     typedef std::unordered_map<id_t, alpha_container_t> idalphamap_t;
 
     ...
 
 protected:
-    // use to generate dart id
+    // use to generate dart ids
     id_t maxid; 
     /* a map with key corresponding to dart id and value a alpha_container_t 
        that contains the 3 value of alpha for the given dart. 
@@ -97,7 +97,7 @@ Complétez les fonctions de parcours par calcul d'orbite.
 ```c++
     /* 
         Return the orbit of dart using a list of alpha relation.
-        Example of use : gmap.orbit(0,[0,1]).
+        Example of use : gmap.orbit({0,1}, 0).
     */
     idlist_t orbit(degreelist_t alphas, id_t dart);
     /*
@@ -120,7 +120,7 @@ Complétez les fonctions de parcours par calcul d'orbite.
     /*
         Return the ordered orbit of dart using a list of alpha relations by applying
         repeatingly the alpha relations of the list to dart.
-        Example of use. gmap.orderedorbit(0,[0,1]).
+        Example of use. gmap.orderedorbit({0,1}, 0).
         Warning: No fixed point for the given alpha should be contained.
     */
     idlist_t orderedorbit(degreelist_t list_of_alpha_value, id_t dart);
