@@ -167,9 +167,22 @@ protected:
 };
 
 
+/*
+template<class T>
+GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
+{
+ // TOCOMPLETE
+}
+*/
+
 /*------------------------------------------------------------------------*/
 
 
+/* 
+    The GMap3D extent GMap class with embedding.
+    The property added is an index of position.
+    A list of indexed position is also maintained.
+*/ 
 class GMap3D : public EmbeddedGMap<id_t> {
 public:
 
@@ -185,7 +198,9 @@ public:
     vec3_t get_position(id_t dart) {
         return positions[get_property(dart)];
     }
- 
+
+    // A new indexed position is added to the list
+    // The index is associated to the dart.
     void set_position(id_t dart, vec3_t pos) {
         id_t pid = positions.size();
         positions.push_back(pos);
@@ -198,9 +213,6 @@ public:
         Update the positions of the dual 0-cells as the centers of the 2-cells
     */
     GMap3D dual();
-
-    void render();
-
 
     static GMap3D square(float xsize = 5, float ysize = 5, float height = 0);
 

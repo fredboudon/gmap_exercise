@@ -1,14 +1,18 @@
 Cartes Combinatoires
-####################
+======================
 
-Le canevas du fichier décrivant la structure de données GMap peut être téléchargé ici. Le fichier de test des différentes fonctions peut lui être téléchargé ici. Pour lancer les fonctions de test. 
+Le canevas du projet implémenant la structure de données GMap sont dans le répertoire src. 
+
+Les spécifications de la structure sont dans le fichier gmap.hpp. Les fonctions a compléter sont dans gmap.cpp. Les fonctions déja implémentées sont dans gmap_helper.cpp. La fonction d'affichage (inspirée du TP précédent) est dans le fichier gmap_display.cpp. Le fichier de test des différentes fonctions s'appelle gmap_main.cpp. 
 
 
 1/ Implémenter une structure de 2-G-carte.
 ------------------------------------------
-Chaque relation alpha (0, 1 et 2) sera codée par un dictionnaire (dict). Completer  la structure suivante
+Cette GMap sera encoder en utilisant des identifiants pour chaque brin.
+Chaque relation alpha (0, 1 et 2) sera codée par un dictionnaire (dict). 
+Etudier et completer si necessaire la structure suivante
 
-```
+```c++
 class GMap {
 public:
 
@@ -30,138 +34,315 @@ public:
         id_t values[3];
     };
 
+    // a type for list of id. usefull for processing
     typedef std::vector<id_t> idlist_t;
+    // a type for set of id . usefull to check if darts have already been processed. 
     typedef std::unordered_set<id_t> idset_t;
+    // a type of list of degree
     typedef std::vector<degree_t> degreelist_t;
+    // a type of map of dart id to alpha values for this id.
     typedef std::unordered_map<id_t, alpha_container_t> idalphamap_t;
 
     ...
 
 protected:
-    id_t maxid; // use to generate dart id
-    idalphamap_t alphas; // a map with key corresponding to dart id and value a alpha_container_t that contains the 3 value of alpha for the given dart. example : { 0 : [0,1,2] }.
+    // use to generate dart id
+    id_t maxid; 
+    /* a map with key corresponding to dart id and value a alpha_container_t 
+       that contains the 3 value of alpha for the given dart. 
+      example : { 0 : [0,1,2] }.
+    */
+    idalphamap_t alphas; 
 };
 
 ```
 
-Une fois completer, vous pouvez tester cette structure avec la function question1 du fichier tp2.py.
+Compléter les fonctions suivantes dans le fichier gmap.cpp
+
+```c++
+    // Return the application of the alpha_deg on dart
+    id_t alpha(degree_t degree, id_t dart) const;
+
+    // Return the application of a composition of alphas on dart
+    id_t alpha(degreelist_t degrees, id_t dart) const;
+
+    
+    //  Test if dart is free for alpha_degree (if it is a fixed point) 
+    bool is_free(degree_t degree, id_t dart) const;
+
+    /*
+        Test the validity of the structure. 
+        Check that alpha_0 and alpha_1 are involutions with no fixed points.
+        Check if alpha_0 o alpha_2 is an involution
+    */
+    bool is_valid() const;
+
+    /* 
+        Create a new dart and return its id. 
+        Set its alpha_i to itself (fixed points) 
+    */
+    id_t add_dart();
+
+    // Link the two darts with a relation alpha_degree if they are both free.
+    bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
+```
+
+Une fois completer, vous pouvez tester cette structure avec la function question1 du fichier gmap_main.cpp et tester les fonctions questionX .
 
 2/ Encoder les parcours de la structure
-class GMap : (continued ..)
-    def orbit(self, dart, list_of_alpha_value):
-        """ 
+------------------------------------------
+
+Compléter les fonctions de parcours par caclcul d'orbite.
+
+```c++
+    /* 
         Return the orbit of dart using a list of alpha relation.
         Example of use : gmap.orbit(0,[0,1]).
-        """
-        result = []
-        marked = set([])
-        toprocess = [dart]
+    */
+    idlist_t orbit(degreelist_t alphas, id_t dart);
+    /*
+    Canvas:
+    {
+        idlist_t result;
+        idset_t marked;
+        idlist_t toprocess = {dart};
         # Tant qu'il y a des elements à traiter
             # prendre un element d à traiter
             # si d n'est pas dans marked
                 # rajouter d dans result et dans marked
                 # pour chaque degree de list_of_alpha_value
                     # rajouter alpha_degree(d) dans toprocess
-Cela permettra de déterminer par exemple tous les éléments de dégrée donné de la structure
 
-class GMap : (continued ..)
-    def elements(self, degree):
-        """ 
-        Return one dart per element of degree. For this, consider all darts as initial set S. 
-        Take the first dart d, remove from the set all darts of the orbit starting from d and 
-        corresponding to element of degree degree. Take then next element from set S and do the 
-        same until S is empty. 
-        Return all darts d that were used. 
-        """
-        
-        elements = []
-        darts = set(self.darts())
-        list_of_alpha_value = range(3)
-        list_of_alpha_value.remove(degree)
-        while len(darts) > 0:
-            dart = darts.pop()
-            elementi = self.orbit(dart, list_of_alpha_value)
-            darts -= set(elementi)
-            elements.append(dart)
-        return elements
-Vous pouvez tester cette structure avec la function question2 du fichier tp2.py.
+        return result;
+    }
+    */
 
-3/ Encoder le plongement géométrique
-Implementer la fonction qui permet de determiner le brin qui contient l'information de plongement pour une i-cellule donné. Pour cela, il vous faut parcourir l'orbite de la i-cellule et vérifier si chaque brin n'a pas de valeur dans le dictionnaire de valeur de plongement.  Grace a cela, les fonctions get_position et set_position permettront d'associer une position à une 0-cellule.
-class GMap : (continued ..)
-  
-    def get_embedding_dart(self, dart, propertydict ):
-        """ 
-        Check if a dart of the orbit representing the vertex has already been 
-        associated with a value in propertydict. If yes, return this dart, else
-        return the dart passed as argument.
-        """
-
-    def get_position(self, dart):
-        """
-        Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
-        """
-        return self.positions.get(self.get_embedding_dart(dart,self.positions))
-
-    def set_position(self, dart, position) :
-        """
-        Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
-        """
-        self.positions[self.get_embedding_dart(dart,self.positions)] = position
-Vous pourrez tester cela avec la fonction question3 du fichier tp2.py qui associe des coordonnées aux sommets d'un carré.
-
-4/ Coder la fonction de couture qui permet de lier deux éléments de degrée ‘degree’. 
-En effet si vous liez deux brins par alpha_2, il faut aussi lier leurs images par alpha_0 pour satisfaire la contrainte que alpha_2(alpha_0) est une involution. La même chose pour lier par alpha_0, il faut également lier les images par alpha_2.
-
-class GMap : (continued ..)
-      def sew_dart(self, degree, dart1, dart2, merge_attribute = True):
-        """
-        Sew two elements of degree 'degree' that start at dart1 and dart2.
-        Determine first the orbits of dart to sew and heck if they are compatible.
-        Sew pairs of corresponding darts, and if they have different embedding 
-        positions, merge them. 
-        """
-Vous pouvez maintenant tester la création d'un cube et d'un cube troué (holeshape) avec les fonction question4a et question4b du fichier tp2.py.
-
-%run tp2.py 4a
-%run tp2.py 4b
-5/ Visualiser les objets avec PlantGL.
-Voici comment afficher une 2-G-Carte comme un ensemble de brins en plantgl (Note: pour pouvoir utiliser le viewer de plantgl, il faut utiliser ipython avec l’option –gui=qt4). Compléter la fonction permettant de visualiser la carte simplement comme un ensemble de faces.
-class GMap : (continued ..)
-    def display(self, color = (190,205,205), add = False):
-    """
-    Display the 2-cells of a 2-G-Map using the ordered orbit of its darts in PlantGL.
-    For each face element, retrieve the position of its ordered face darts and add a FaceSet PlantGL object to the scene.
-    Example : s += pgl.Shape(pgl.FaceSet( [[0,0,0],[1,0,0],[1,1,0],[0,1,0]], [[0,1,2,3]]) , pgl.Material((0,100,0))) # for a green square
-    """
-Pour cela, vous aurez besoin de coder une fonction d’orbite ordonnée qui alterne les différents alpha_degree
-
-class GMap : (continued ..)
-      def orderedorbit(self, dart, list_of_alpha_value):
-        """
+    /*
         Return the ordered orbit of dart using a list of alpha relations by applying
         repeatingly the alpha relations of the list to dart.
         Example of use. gmap.orderedorbit(0,[0,1]).
         Warning: No fixed point for the given alpha should be contained.
-        """
-Vous pourrez alors tester la visualization du cube et du cube troué avec question5a et question5b. A noter que vous pourrez également visualiser les brins de ces structures avec les fonctions question5c et question5d.
+    */
+    idlist_t orderedorbit(degreelist_t list_of_alpha_value, id_t dart);
+    /*
+    Canvas:
+    {
+        idlist_t result;
+        id_t current_dart = dart;
+        unsigned char current_alpha_index = 0;
+        size_t n_alpha = list_of_alpha_value.size();
+        # Tant que current_dart est different de dart
+            # ajouter current_dart au resultat
+            # prendre le prochain alpha de list_of_alpha_value avec current_alpha_index
+            # incrémenter current_alpha_index
+            # changer current_dart par alpha_current_alpha(current_dart)
 
-6/ Coder une fonction qui calcule la caractéristique d’Euler-Poincarré (S-A+F)
+        return result;    
+    }    
+    */
+```
+
+Cela permettra de faire marcher la fonction elements qui détermine les i-cellules de la carte.
+
+```c++
+GMap::idlist_t GMap::elements( degree_t degree) {
+    idlist_t elements;
+    idlist_t vdarts = darts();
+    idset_t sdarts (vdarts.begin(), vdarts.end());
+ 
+    degreelist_t  list_of_alpha_value = {0, 1, 2};
+    list_of_alpha_value.erase(list_of_alpha_value.begin()+degree);
+ 
+    while (!sdarts.empty()){
+        id_t dart = *sdarts.begin();
+        sdarts.erase(sdarts.begin());
+        idlist_t elementi = orbit(list_of_alpha_value, dart);
+        for (id_t d : elementi) sdarts.erase(d);
+        elements.push_back(dart);
+    }
+ 
+    return elements;
+}
+```
+
+Vous pouvez tester cette structure avec la fonction question2.
+
+3/ Encoder le plongement géométrique
+------------------------------------------
+
+La classe GMap est sous classé en GMap3D pour intégrer le plongement géométrique.
 
 
-class GMap : (continued ..)
- def eulercharacteristic(self):
-    """
-    Compute the Euler-Poincare characteristic of the subdivision
-    """
-Vous pourrez tester cette fonction sur la structure de cube avec la fonction question6.
+```c++
+template<class T>
+class EmbeddedGMap : public GMap {
+public:
+    typedef T property_t;
+    typedef std::unordered_map<id_t, property_t> idpropmap_t;
+
+    EmbeddedGMap() {}
+    ~EmbeddedGMap() {}
+
+    /*
+        Check if a dart of the orbit representing the vertex has already been 
+        associated with a value in propertydict. If yes, return this dart, else
+        return the dart passed as argument.
+    */
+    id_t get_embedding_dart(id_t dart) ;
+
+
+
+    // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
+    const T& get_property(id_t dart) ;
+
+
+    // Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
+    id_t set_property(id_t dart, T prop) ;
+
+protected:
+
+    // A map that associate a property to each dart.
+    idpropmap_t properties;
+};
+
+/* 
+    The GMap3D extent GMap class with embedding.
+    The property added is an index of position.
+    A list of indexed position is also maintained.
+*/
+class GMap3D : public EmbeddedGMap<id_t> {
+public:
+
+    ...
+
+    // A new indexed position is added to the list
+    // The index is associated to the dart.
+    void set_position(id_t dart, vec3_t pos) {
+        id_t pid = positions.size();
+        positions.push_back(pos);
+        set_property(dart, pid);
+    }
+
+    // A vector of indexed position
+    std::vector<vec3_t> positions;
+
+};
+```
+
+Implementer la fonction qui permet de determiner le brin qui contient l'information de plongement pour une i-cellule donné. Pour cela, il vous faut parcourir l'orbite de la i-cellule et vérifier si chaque brin n'a pas de valeur dans le dictionnaire de valeur de plongement.  Grace a cela, les fonctions get_position et set_position permettront d'associer une position à une 0-cellule.
+
+A noter que cette fonction est dans le fichier gmap.hpp
+
+```c++
+template<class T>
+GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
+/*
+Canvas
+{
+    Tester pour chaque brin de l'orbit<1,2> de dart s'il possede une propriété dans properties.
+    Si oui, le retourner.
+    Si aucun brin de l'orbite n'a de propriété, retourner dart.
+}
+*/
+```
+Vous pourrez tester cela avec la fonction question3 qui associe des coordonnées aux sommets d'un carré.
+
+4/ Coder la fonction de couture qui permet de lier deux éléments de degrée ‘degree’. 
+------------------------------------------------------------------------------------
+
+En effet si vous liez deux brins par alpha_2, il faut aussi lier leurs images par alpha_0 pour satisfaire la contrainte que alpha_2(alpha_0) est une involution. La même chose pour lier par alpha_0, il faut également lier les images par alpha_2. Si le lien est fait par alpha_1, pas de contrainte s'applique. Il faut juste lier les brins.
+
+```c++
+/*
+    Sew two elements of degree 'degree' that start at dart1 and dart2.
+    Determine first the orbits of dart to sew and heck if they are compatible.
+    Sew pairs of corresponding darts
+    # and if they have different embedding  positions, merge them. 
+*/
+bool GMap::sew_dart(degree_t degree, id_t dart1, id_t dart2)
+/*
+Canvas:
+{
+    Si degree est égal a 1:
+        Simplement lier par alpha_1 les deux brins
+    Sinon:
+        Si degree == 0: Trouver les orbites par alpha_2 des deux brins.
+        Si degree == 2: Trouver les orbites par alpha_0 des deux brins.
+
+        Vérifier que les orbites sont compatibles (meme taille). Sinon retourner false
+
+        Lié deux a deux par alpha_degree les brins des 2 orbites.
+
+        return true
+}
+*/
+```
+
+Vous pouvez maintenant tester la création d'un cube et d'un cube troué (holeshape) avec les fonction question4a et question4b.
+
+5/ Coder une fonction qui calcule la caractéristique d’Euler-Poincaré (S-A+F)
+------------------------------------------------------------------------------------
+
+Compléter la fonction qui calcule la caractéristique d'Euler-Poincaré
+```c++
+// Compute the Euler-Poincare characteristic of the subdivision
+int GMap::eulercharacteristic()
+/*
+Canvas:
+{
+    return S - A + F
+}
+```
+Vous pourrez tester cette fonction sur la structure de cube avec la fonction question5.
+
+
+6/ Visualiser les objets
+------------------------------------------
+Compléter la fonction ```display``` du ficher gmap_display.cpp permettant de visualiser la carte simplement comme un ensemble de faces.
+
+```c++
+int display(const GMap3D& gmap)
+```
+Il faut transformer la gmap en liste de sommet et d'indices. 
+A noter  que les faces dans les exemples sont des quadrilatère qu'il vous faudra transformer en triangle ([a,b,c,d] -> [a,b,c]+[a,c,d]). A noter également qu'il vous faut calculer les normales de chaque faces. La valeur de propriété de chaque vertex peut pour l'instant etre définie aléatoirement.
+
+```c++
+    std::vector<unsigned short> indices; //Triangles concaténés dans une liste
+    std::vector<glm::vec3> indexed_vertices;
+    std::vector<glm::vec3> indexed_normals;
+    std::vector<unsigned int> property;
+```
+
+
+Vous pourrez alors tester la visualization du cube et du cube troué avec question6a et question6b. 
+
 
 7/ Coder une fonction qui calcule le dual d’une 2-G-Carte.
-class GMap : (continued ..)
-  def dual(self):
-    """
-    Compute the dual of the object
-    Create a new GMap object with the same darts but reversed alpha relations
-    Update the positions of the dual 0-cells as the centers of the 2-cells
-    """
+------------------------------------------------------------------------------------
+
+```c++
+GMap3D GMap3D::dual()
+/*
+Canvas:
+{
+    GMap3D dual_gmap;
+    dual_gmap.maxid = maxid;
+
+    Créer un dictionnaire alpha egal a celui de this tel que les valeurs de alphas_2 et alphas_0 soit inversés.
+    
+    Pour chaque brin correspondant aux faces de this (et donc aux sommets de dual_gmap),
+    Calculer le barycentre de la face avec la fonction element_center.
+    Associer cette position au brin correspondant de dual_gmap
+
+
+    return dual_gmap;
+
+}
+```
+
 Vous pourrez tester cette fonction sur la structure de cube avec la fonction question7.
+
+8/ Evaluer les changements necessaires pour encoder une simple 2-Carte.
+------------------------------------------------------------------------------------
+
+Qu'est ce que vous y gagneriez ? perdriez ?

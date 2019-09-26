@@ -53,21 +53,23 @@ GMap3D question4b(){
     return mgmap;
 }
 
-void question5a() {
+
+void question5(){
+    GMap3D mgmap = GMap3D::cube();
+    printf("Euler characteristic : %i\n", mgmap.eulercharacteristic());
+}
+
+
+void question6a() {
     GMap3D mgmap = question4a();
     display(mgmap);
 }
 
-void question5b() {
+void question6b() {
     GMap3D mgmap = question4b();
     display(mgmap);
 }
 
-
-void question6(){
-    GMap3D mgmap = GMap3D::cube();
-    printf("Euler characteristic : %i\n", mgmap.eulercharacteristic());
-}
 
 
 void question7(){
