@@ -5,6 +5,7 @@
 /* 
     Create a new dart and return its id. 
     Set its alpha_i to itself (fixed points) 
+    Use maxid to determine the new id. Dont forget to increment it.
 */
 GMap::id_t GMap::add_dart()
 {

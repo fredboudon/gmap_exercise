@@ -50,7 +50,8 @@ public:
 
     /* 
         Create a new dart and return its id. 
-        Set its alpha_i to itself (fixed points) 
+        Set its alpha_i to itself (fixed points).
+        Use maxid to determine the new id. Dont forget to increment it.
     */
     id_t add_dart();
 
