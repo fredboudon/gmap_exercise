@@ -63,7 +63,6 @@ add_definitions(
 # question 1
 add_executable(gmap 
     src/gmap_helper.cpp
-    src/gmap.cpp
     src/gmap_main.cpp
     src/gmap_display.cpp
     common/shader.cpp

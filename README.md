@@ -60,34 +60,49 @@ protected:
 Complétez les fonctions suivantes dans le fichier ```gmap.cpp```
 
 ```c++
-    // Return the application of the alpha_deg on dart
-    id_t alpha(degree_t degree, id_t dart) const;
-
-    // Return the application of a composition of alphas on dart
-    id_t alpha(degreelist_t degrees, id_t dart) const;
-
-    
-    //  Test if dart is free for alpha_degree (if it is a fixed point) 
-    bool is_free(degree_t degree, id_t dart) const;
-
-    /*
-        Test the validity of the structure. 
-        Check that alpha_0 and alpha_1 are involutions with no fixed points.
-        Check if alpha_0 o alpha_2 is an involution
-    */
-    bool is_valid() const;
-
     /* 
         Create a new dart and return its id. 
         Set its alpha_i to itself (fixed points) 
     */
     id_t add_dart();
 
+```
+Une fois completée, vous pouvez tester cette structure avec la function ```question1a``` du fichier ```gmap_main.cpp```.
+
+```c++
+    // Return the application of the alpha_deg on dart
+    id_t alpha(degree_t degree, id_t dart) const;
+
+    // Return the application of a composition of alphas on dart. Apply degrees in reversed order.
+    id_t alpha(degreelist_t degrees, id_t dart) const;
+
+    
+    //  Test if dart is free for alpha_degree (if it is a fixed point) 
+    bool is_free(degree_t degree, id_t dart) const;
+```
+
+A tester avec la function ```question1b``` du fichier ```gmap_main.cpp```.
+
+```c++
     // Link the two darts with a relation alpha_degree if they are both free.
     bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
 ```
 
-Une fois completée, vous pouvez tester cette structure avec la function ```question1``` du fichier ```gmap_main.cpp```.
+A tester avec la function ```question1c``` du fichier ```gmap_main.cpp```.
+
+```c++
+    /*
+        Test the validity of the structure. 
+        Check if alpha_0 and alpha_1 are involutions with no fixed points.
+        Check if alpha_2 is an involution.
+        Check if alpha_0 o alpha_2 is an involution
+    */
+    bool is_valid() const;
+
+```
+
+A tester avec la function ```question1d``` du fichier ```gmap_main.cpp```.
+
 
 2/ Les parcours de la structure
 ------------------------------------------

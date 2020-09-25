@@ -1,5 +1,17 @@
-#include "gmap.hpp"
+// #include "gmap.hpp"
+#ifdef GMAP_CORE
 /*------------------------------------------------------------------------*/
+
+/* 
+    Create a new dart and return its id. 
+    Set its alpha_i to itself (fixed points) 
+*/
+GMap::id_t GMap::add_dart()
+{
+}
+
+/*------------------------------------------------------------------------*/
+
 
 // Return the application of the alpha_deg on dart
 GMap::id_t GMap::alpha(degree_t degree, id_t dart) const
@@ -17,26 +29,29 @@ bool GMap::is_free(degree_t degrees, id_t dart) const
 {
 }
 
-/*
-    Test the validity of the structure. 
-    Check that alpha_0 and alpha_1 are involutions with no fixed points.
-*/
-bool GMap::is_valid() const
-{
-}
+/*------------------------------------------------------------------------*/
 
-/* 
-    Create a new dart and return its id. 
-    Set its alpha_i to itself (fixed points) 
-*/
-GMap::id_t GMap::add_dart()
-{
-}
 
 // Link the two darts with a relation alpha_degree if they are both free.
 bool GMap::link_darts(degree_t degree, id_t dart1, id_t dart2)
 {
 }
+
+
+/*------------------------------------------------------------------------*/
+
+/*
+        Test the validity of the structure. 
+        Check if alpha_0 and alpha_1 are involutions with no fixed points.
+        Check if alpha_2 is an involution.
+        Check if alpha_0 o alpha_2 is an involution
+*/
+bool GMap::is_valid() const
+{
+}
+
+/*------------------------------------------------------------------------*/
+
 
 /* 
     Return the orbit of dart using a list of alpha relation.
@@ -72,22 +87,28 @@ int GMap::eulercharacteristic()
 {
 }
 
-
+#endif
 /*------------------------------------------------------------------------*/
+
 
 /*
     Check if a dart of the orbit representing the vertex has already been 
     associated with a value in propertydict. If yes, return this dart, else
     return the dart passed as argument.
 */
+
+
+
 template<class T>
 GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
 {
+ // TOCOMPLETE
 }
 
 
-
 /*------------------------------------------------------------------------*/
+
+#ifdef GMAP_CORE
 
 GMap3D GMap3D::dual()
 {
@@ -95,3 +116,5 @@ GMap3D GMap3D::dual()
 
 
 /*------------------------------------------------------------------------*/
+
+#endif

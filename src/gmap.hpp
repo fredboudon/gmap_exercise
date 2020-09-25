@@ -15,7 +15,7 @@ typedef glm::vec3 vec3_t;
 // Build a topological GMap of degree 2
 class GMap {
 public:
-
+    friend void question1d();
     // id type
     typedef unsigned long int id_t;
     // degree type. should be in [0,1,2]
@@ -48,18 +48,29 @@ public:
     GMap();
     ~GMap();
 
+    /* 
+        Create a new dart and return its id. 
+        Set its alpha_i to itself (fixed points) 
+    */
+    id_t add_dart();
+
     // Return a list of id representing the darts of the structure
     idlist_t darts() const;
 
-    // Return the application of the alpha_deg on dart
+
+    // Return the application of the alpha_deg on dart. Use function .at on alphas to keep const access.
     id_t alpha(degree_t degree, id_t dart) const;
 
-    // Return the application of a composition of alphas on dart
+    // Return the application of a composition of alphas on dart. Apply degrees in reversed order.
     id_t alpha(degreelist_t degrees, id_t dart) const;
 
     
     //  Test if dart is free for alpha_degree (if it is a fixed point) 
     bool is_free(degree_t degree, id_t dart) const;
+
+    // Link the two darts with a relation alpha_degree if they are both free.
+    bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
+
 
     /*
         Test the validity of the structure. 
@@ -68,14 +79,6 @@ public:
     */
     bool is_valid() const;
 
-    /* 
-        Create a new dart and return its id. 
-        Set its alpha_i to itself (fixed points) 
-    */
-    id_t add_dart();
-
-    // Link the two darts with a relation alpha_degree if they are both free.
-    bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
 
     // Print for each dart, the value of the different alpha applications.
     void print_alphas();
@@ -167,13 +170,7 @@ protected:
 };
 
 
-/*
-template<class T>
-GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
-{
- // TOCOMPLETE
-}
-*/
+
 
 /*------------------------------------------------------------------------*/
 
@@ -230,4 +227,11 @@ int display(const GMap3D& gmap);
 
 /*------------------------------------------------------------------------*/
 
+#define GMAP_SOLUTION
 
+
+#ifdef GMAP_SOLUTION
+#include "gmap_solution.cpp"
+#else
+#include "gmap.cpp"
+#endif
