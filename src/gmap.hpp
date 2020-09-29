@@ -86,17 +86,17 @@ public:
 
     /* 
         Return the orbit of dart using a list of alpha relation.
-        Example of use : gmap.orbit(0,[0,1]).
+        Example of use : gmap.orbit([0,1],0).
     */
-    idlist_t orbit(degreelist_t alphas, id_t dart);
+    idlist_t orbit(const degreelist_t& alphas, id_t dart);
 
     /*
         Return the ordered orbit of dart using a list of alpha relations by applying
         repeatingly the alpha relations of the list to dart.
-        Example of use. gmap.orderedorbit(0,[0,1]).
+        Example of use. gmap.orderedorbit([0,1],0).
         Warning: No fixed point for the given alpha should be contained.
     */
-    idlist_t orderedorbit(degreelist_t list_of_alpha_value, id_t dart);
+    idlist_t orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart);
 
     /* 
         Return one dart per element of degree. For this, consider all darts as initial set S. 
@@ -228,7 +228,7 @@ int display(const GMap3D& gmap);
 
 /*------------------------------------------------------------------------*/
 
-#define GMAP_SOLUTION
+// #define GMAP_SOLUTION
 
 
 #ifdef GMAP_SOLUTION

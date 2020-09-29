@@ -20,14 +20,15 @@ GMap::id_t GMap::alpha(degree_t degree, id_t dart) const
 }
 
 // Return the application of a composition of alphas on dart
-GMap::id_t GMap::alpha(degreelist_t degree, id_t dart) const
+GMap::id_t GMap::alpha(degreelist_t degrees, id_t dart) const
 {
 }
 
 
 //  Test if dart is free for alpha_degree (if it is a fixed point) 
-bool GMap::is_free(degree_t degrees, id_t dart) const
+bool GMap::is_free(degree_t degree, id_t dart) const
 {
+    return false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -36,6 +37,7 @@ bool GMap::is_free(degree_t degrees, id_t dart) const
 // Link the two darts with a relation alpha_degree if they are both free.
 bool GMap::link_darts(degree_t degree, id_t dart1, id_t dart2)
 {
+    return false;
 }
 
 
@@ -49,6 +51,7 @@ bool GMap::link_darts(degree_t degree, id_t dart1, id_t dart2)
 */
 bool GMap::is_valid() const
 {
+    return false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -56,19 +59,19 @@ bool GMap::is_valid() const
 
 /* 
     Return the orbit of dart using a list of alpha relation.
-    Example of use : gmap.orbit(0,[0,1]).
+    Example of use : gmap.orbit([0,1],0).
 */
-GMap::idlist_t GMap::orbit(degreelist_t alphas, id_t dart)
+GMap::idlist_t GMap::orbit(const degreelist_t& alphas, id_t dart)
 {
 }
 
 /*
     Return the ordered orbit of dart using a list of alpha relations by applying
     repeatingly the alpha relations of the list to dart.
-    Example of use. gmap.orderedorbit(0,[0,1]).
+    Example of use. gmap.orderedorbit([0,1],0).
     Warning: No fixed point for the given alpha should be contained.
 */
-GMap::idlist_t GMap::orderedorbit(degreelist_t list_of_alpha_value, id_t dart)
+GMap::idlist_t GMap::orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart)
 {
 }
 
@@ -81,11 +84,13 @@ GMap::idlist_t GMap::orderedorbit(degreelist_t list_of_alpha_value, id_t dart)
 */
 bool GMap::sew_dart(degree_t degree, id_t dart1, id_t dart2)
 {
+    return false;
 }
 
 // Compute the Euler-Poincare characteristic of the subdivision
 int GMap::eulercharacteristic()
 {
+    return 0;
 }
 
 #endif
@@ -103,7 +108,8 @@ int GMap::eulercharacteristic()
 template<class T>
 GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
 {
- // TOCOMPLETE
+    // TOCOMPLETE
+    return dart;
 }
 
 
