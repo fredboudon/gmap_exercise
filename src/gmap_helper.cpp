@@ -19,7 +19,7 @@ void GMap::print_alphas() {
     }        
 }
 
-GMap::idlist_t GMap::elements( degree_t degree) {
+GMap::idlist_t GMap::elements( degree_t degree) const {
     idlist_t elements;
     idlist_t vdarts = darts();
     idset_t sdarts (vdarts.begin(), vdarts.end());

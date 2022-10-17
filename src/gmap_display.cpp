@@ -28,7 +28,53 @@ using namespace glm;
 
 /*******************************************************************************/
 
-int display(const GMap3D& gmap)
+void compute_triangle_normals(std::vector< glm::vec3 > & triangle_normals,
+    std::vector< glm::vec3 > & vertices,
+    std::vector< std::vector< unsigned short > > & triangles) {
+
+    for (size_t i = 0; i < triangles.size(); ++i) {
+        glm::vec3 XY = vertices[triangles[i][1]] - vertices[triangles[i][0]];
+        glm::vec3 XZ = vertices[triangles[i][2]] - vertices[triangles[i][0]];
+        triangle_normals[i] = normalize(cross(XY, XZ));
+    }
+}
+
+void collect_one_ring(std::vector< std::vector< unsigned short > > & one_ring,
+    std::vector< glm::vec3 > & vertices,
+    std::vector< std::vector< unsigned short > > & triangles) {
+    for (size_t i = 0; i < triangles.size(); ++i)
+        for (size_t k = 0; k < triangles[i].size(); ++k)
+            one_ring[triangles[i][k]].push_back(static_cast<unsigned short>(i));
+}
+
+void compute_smooth_vertex_normals(unsigned int weight_type, std::vector< glm::vec3 > & vertex_normals,
+    std::vector< glm::vec3 > & vertices,
+    std::vector< std::vector< unsigned short > > & triangles) {
+    float w = 1.0; // default: uniform weights
+
+    // Get triangle face normals
+    std::vector< glm::vec3 > triangle_normals;
+    triangle_normals.resize(triangles.size());
+    compute_triangle_normals(triangle_normals, vertices, triangles);
+
+    // Get one-ring for each vertex
+    std::vector< std::vector< unsigned short > > one_ring;
+    one_ring.resize(vertices.size());
+    collect_one_ring(one_ring, vertices, triangles);
+
+    // Compute vertex normals
+    for (size_t i = 0; i < vertices.size(); ++i) {
+        for (size_t k = 0; k < one_ring[i].size(); ++k) {
+            vertex_normals[i] += triangle_normals[one_ring[i][k]];
+        }
+    }
+    for (size_t i = 0; i < vertices.size(); ++i) {
+        vertex_normals[i] = normalize(vertex_normals[i]);
+    }
+
+}
+
+int display(const  GMap3D& gmap)
 {
     // Initialise GLFW
     if( !glfwInit() )
@@ -73,7 +119,7 @@ int display(const GMap3D& gmap)
     glfwSetCursorPos(window, 1024/2, 768/2);
 
     // Dark blue background
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glClearColor(0.4f, 0.4f, 0.4f, 0.0f);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -96,15 +142,75 @@ int display(const GMap3D& gmap)
     GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
 
 
-    std::vector<unsigned short> indices; //Triangles concaténés dans une liste
-    std::vector<glm::vec3> indexed_vertices;
-    std::vector<glm::vec3> indexed_normals;
-    std::vector<unsigned int> property;
-
     // transform the gmap into set of triangles
     // TOCOMPLETE
     // for the property, you can first use a random value for each vertices.
 
+    std::vector<unsigned short> indices; //Triangles concaténés dans une liste
+    std::vector<glm::vec3> indexed_vertices; // Liste des indices dans l'ordre
+    std::vector<glm::vec3> indexed_normals;  // Normale des triangles
+    std::vector<unsigned int> property;
+
+    // transform the gmap into set of triangles
+    GMap::idlist_t vhandler = gmap.elements(0);
+
+    std::unordered_map<id_t,id_t> vertex_index;
+
+    //Pour chaque brin lié à un sommet
+    for (size_t i = 0; i < vhandler.size(); i++) {
+        vhandler[i] = gmap.get_embedding_dart( vhandler[i] );
+        vertex_index[vhandler[i]] = indexed_vertices.size();
+        indexed_vertices.push_back( gmap.get_position( vhandler[i] ) );
+    }
+
+    GMap::idlist_t fdarts = gmap.elements(2);
+
+    // Pour chaque brin par face
+    for (size_t i = 0; i < fdarts.size(); i++){
+        GMap::idlist_t orbit_i_darts = gmap.orderedorbit( {0,1}, fdarts[i]);
+
+        std::vector<unsigned short> findices;
+        for (size_t j = 0; j < orbit_i_darts.size(); j+=2){
+            GMap::id_t fvert = gmap.get_embedding_dart( orbit_i_darts[j] );
+            // unsigned short ifvert = std::distance(vhandler.begin(), std::find(vhandler.begin(), vhandler.end(), fvert));
+            findices.push_back(vertex_index[fvert]);
+        }
+        if (findices.size() >= 3){
+            for(std::vector<unsigned short>::const_iterator itI = findices.begin()+1 ; itI != findices.end()-1 ; ++itI ){
+                indices.push_back(findices[0]);
+                indices.push_back(*itI);
+                indices.push_back(*(itI+1));
+            }
+
+        }
+    }
+
+    // Calcul des normales
+    indexed_normals.resize(indexed_vertices.size(), glm::vec3(0.));
+    std::vector<std::vector<unsigned short> > triangles;
+    for (size_t i = 0; i < indices.size(); i+=3){
+        std::vector<unsigned short> Tp;
+        Tp.push_back( indices[i] );
+        Tp.push_back( indices[i+1] );
+        Tp.push_back( indices[i+2] );
+        triangles.push_back(Tp);
+    }
+    compute_smooth_vertex_normals(0, indexed_normals, indexed_vertices, triangles);
+
+    // for the property, you can first use a random value for each vertices.
+    property.resize(indexed_vertices.size(), static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
+
+    for( unsigned int i = 0 ; i < indexed_vertices.size() ; i++ ){
+        printf("%i:%f %f %f \n",i, indexed_vertices[i][0],indexed_vertices[i][1],indexed_vertices[i][2]);
+    }
+
+    for( unsigned int i = 0 ; i < indices.size()/3 ; i++ ){
+        printf("%i:%i %i %i \n",i, indices[3*i],indices[3*i+1],indices[3*i+2]);
+    }
+
+    for( unsigned int i = 0 ; i < indexed_normals.size() ; i++ ){
+        printf("%i:%f %f %f \n",i, indexed_normals[i][0],indexed_normals[i][1],indexed_normals[i][2]);
+    }
 
     glm::vec3 bb_min( FLT_MAX, FLT_MAX, FLT_MAX );
     glm::vec3 bb_max( FLT_MIN, FLT_MIN, FLT_MIN );
@@ -175,7 +281,7 @@ int display(const GMap3D& gmap)
         glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
         // Camera matrix
         glm::mat4 ViewMatrix       = glm::lookAt(
-                    glm::vec3(0,0,3), // Camera is at (4,3,3), in World Space
+                    glm::vec3(0,0,5), // Camera is at (4,3,3), in World Space
                     glm::vec3(0,0,0), // and looks at the origin
                     glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                     );
@@ -206,7 +312,7 @@ int display(const GMap3D& gmap)
 
 
         // 3rd attribute buffer : normals
-        glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
         glVertexAttribPointer(
                     1,                                // attribute
@@ -218,7 +324,7 @@ int display(const GMap3D& gmap)
                     );
 
         // 4th attribute buffer : property
-        glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(2);
         glBindBuffer(GL_ARRAY_BUFFER, propertybuffer);
         glVertexAttribPointer(
                     2,                                // attribute

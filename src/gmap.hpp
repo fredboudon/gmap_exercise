@@ -88,7 +88,7 @@ public:
         Return the orbit of dart using a list of alpha relation.
         Example of use : gmap.orbit([0,1],0).
     */
-    idlist_t orbit(const degreelist_t& alphas, id_t dart);
+    idlist_t orbit(const degreelist_t& alphas, id_t dart) const;
 
     /*
         Return the ordered orbit of dart using a list of alpha relations by applying
@@ -96,7 +96,7 @@ public:
         Example of use. gmap.orderedorbit([0,1],0).
         Warning: No fixed point for the given alpha should be contained.
     */
-    idlist_t orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart);
+    idlist_t orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart) const;
 
     /* 
         Return one dart per element of degree. For this, consider all darts as initial set S. 
@@ -105,7 +105,7 @@ public:
         same until S is empty. 
         Return all darts d that were used. 
     */
-    idlist_t elements( degree_t degree);
+    idlist_t elements( degree_t degree) const;
 
     /*
         Sew two elements of degree 'degree' that start at dart1 and dart2.
@@ -116,7 +116,7 @@ public:
     bool sew_dart(degree_t degree, id_t dart1, id_t dart2);
 
     // Compute the Euler-Poincare characteristic of the subdivision
-    int eulercharacteristic();
+    int eulercharacteristic() const;
 
 
     idlist_t add_square();
@@ -146,15 +146,15 @@ public:
         associated with a value in propertydict. If yes, return this dart, else
         return the dart passed as argument.
     */
-    id_t get_embedding_dart(id_t dart) ;
+    id_t get_embedding_dart(id_t dart) const ;
 
 
 
     // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
-    const T& get_property(id_t dart) {
+    const T& get_property(id_t dart) const {
         id_t d = get_embedding_dart(dart);
         if (properties.count(d) == 0) { throw d; }
-        return properties[d];
+        return properties.at(d);
     }
 
 
@@ -193,7 +193,7 @@ public:
     // Compute the center of each element.
     vec3_t element_center(degree_t degree, id_t dart);
 
-    vec3_t get_position(id_t dart) {
+    vec3_t get_position(id_t dart) const {
         return positions[get_property(dart)];
     }
 
@@ -228,7 +228,7 @@ int display(const GMap3D& gmap);
 
 /*------------------------------------------------------------------------*/
 
-// #define GMAP_SOLUTION
+#define GMAP_SOLUTION
 
 
 #ifdef GMAP_SOLUTION

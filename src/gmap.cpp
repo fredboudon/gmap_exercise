@@ -61,7 +61,7 @@ bool GMap::is_valid() const
     Return the orbit of dart using a list of alpha relation.
     Example of use : gmap.orbit([0,1],0).
 */
-GMap::idlist_t GMap::orbit(const degreelist_t& alphas, id_t dart)
+GMap::idlist_t GMap::orbit(const degreelist_t& alphas, id_t dart) const
 {
 }
 
@@ -71,7 +71,7 @@ GMap::idlist_t GMap::orbit(const degreelist_t& alphas, id_t dart)
     Example of use. gmap.orderedorbit([0,1],0).
     Warning: No fixed point for the given alpha should be contained.
 */
-GMap::idlist_t GMap::orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart)
+GMap::idlist_t GMap::orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart) const
 {
 }
 
@@ -88,7 +88,7 @@ bool GMap::sew_dart(degree_t degree, id_t dart1, id_t dart2)
 }
 
 // Compute the Euler-Poincare characteristic of the subdivision
-int GMap::eulercharacteristic()
+int GMap::eulercharacteristic() const
 {
     return 0;
 }
@@ -106,7 +106,7 @@ int GMap::eulercharacteristic()
 
 
 template<class T>
-GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
+GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) const
 {
     // TOCOMPLETE
     return dart;

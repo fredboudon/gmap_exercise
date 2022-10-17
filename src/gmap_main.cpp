@@ -127,6 +127,7 @@ GMap3D question4a(){
 GMap3D question4b(){
     GMap3D mgmap = GMap3D::holeshape();
     mgmap.print_alphas();
+    assert(mgmap.is_valid());
     return mgmap;
 }
 
