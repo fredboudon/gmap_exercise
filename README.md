@@ -9,7 +9,7 @@ Les spécifications de la structure sont dans le fichier ```gmap.hpp```. Les fon
 1/ La structure de 2-G-carte.
 ------------------------------------------
 Cette GMap sera encodée en représentant chaque brin par un identifiant.
-Chaque relation alpha (0, 1 et 2) sera codée par un dictionnaire (dict). 
+Chaque relation alpha (0, 1 et 2) sera codée par un dictionnaire (std::unordered_map). 
 Etudiez et completez si necessaire la structure suivante
 
 ```c++
