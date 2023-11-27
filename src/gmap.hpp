@@ -228,7 +228,7 @@ int display(const GMap3D& gmap);
 
 /*------------------------------------------------------------------------*/
 
-#define GMAP_SOLUTION
+// #define GMAP_SOLUTION
 
 
 #ifdef GMAP_SOLUTION
