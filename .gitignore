@@ -9,3 +9,4 @@ compile_commands.json
 CTestTestfile.cmake
 build
 src/gmap
+src/gmap_solution.cpp
