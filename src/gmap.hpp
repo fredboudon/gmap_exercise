@@ -2,6 +2,8 @@
 #include  <unordered_map>
 #include  <unordered_set>
 #include <vector>
+#include <cstio>
+#include <cstring>
 
 // Include GLM
 #include <glm/glm.hpp>
