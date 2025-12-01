@@ -1,6 +1,6 @@
 # CMake entry point
-cmake_minimum_required (VERSION 3.0)
-project (questions)
+cmake_minimum_required (VERSION 4.0)
+project (gmap)
 
 find_package(OpenGL REQUIRED)
 
@@ -25,31 +25,17 @@ else()
 endif()
 
 
-# Compile external dependencies 
-add_subdirectory (external)
+include_directories("$ENV{CONDA_PREFIX}/include" .)
+link_directories("$ENV{CONDA_PREFIX}/lib")
 
-cmake_policy(SET CMP0026 OLD)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/rpavlik-cmake-modules-fe2273")
-include(CreateLaunchers)
-include(MSVCMultipleProcessCompile) # /MP
-
-if(INCLUDE_DISTRIB)
-	add_subdirectory(distrib)
-endif(INCLUDE_DISTRIB)
-
-
-
-include_directories(
-	external/glfw-3.1.2/include/
-	external/glm-0.9.7.1/
-	external/glew-1.13.0/include/
-	.
-)
+set(CMAKE_INCLUDE_PATH "$ENV{CONDA_PREFIX}/include" ${CMAKE_INCLUDE_PATH})
+set(CMAKE_LIBRARY_PATH "$ENV{CONDA_PREFIX}/lib" ${CMAKE_LIBRARY_PATH})
+message(STATUS "Include" ${CMAKE_INCLUDE_PATH})
 
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
-	GLEW_1130
+	GLEW
 )
 
 add_definitions(
@@ -58,6 +44,7 @@ add_definitions(
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
+	-DGLM_ENABLE_EXPERIMENTAL
 )
 
 # question 1
@@ -81,9 +68,10 @@ add_executable(gmap
 target_link_libraries(gmap
 	${ALL_LIBS}
 )
+
 # Xcode and Visual working directories
-set_target_properties(gmap PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-create_target_launcher(gmap WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/")
+#set_target_properties(gmap PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/")
+#create_target_launcher(gmap WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 
 
 SOURCE_GROUP(common REGULAR_EXPRESSION ".*/common/.*" )

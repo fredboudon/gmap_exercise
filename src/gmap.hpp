@@ -2,7 +2,7 @@
 #include  <unordered_map>
 #include  <unordered_set>
 #include <vector>
-#include <cstio>
+#include <cstdio>
 #include <cstring>
 
 // Include GLM
@@ -154,17 +154,13 @@ public:
 
     // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
     const T& get_property(id_t dart) const {
-        id_t d = get_embedding_dart(dart);
-        if (properties.count(d) == 0) { throw d; }
-        return properties.at(d);
+
     }
 
 
     // Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
     id_t set_property(id_t dart, T prop) {
-        id_t d = get_embedding_dart(dart);
-        properties[d] = prop;
-        return d;
+
     }
 
 protected:
