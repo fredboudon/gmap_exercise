@@ -13,6 +13,21 @@ Le module dépend des librairies glew et glm. Pour cela utiliser l'environnement
 ```bash
 conda env create -f environnement.yaml
 ```
+Vous pouvez ensuite l'activer:
+
+```bash
+conda activate gmap
+```
+Puis compiler le projet
+
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
+
 
 1/ La structure de 2-G-carte.
 ------------------------------------------
