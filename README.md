@@ -11,7 +11,7 @@ Les spécifications de la structure sont dans le fichier ```gmap.hpp```. Les fon
 Le module dépend des librairies glew et glm. Pour cela utiliser l'environnement conda fournit:
 
 ```bash
-conda env create -f environnement.yaml
+conda env create -f environment.yaml
 ```
 Vous pouvez ensuite l'activer:
 
