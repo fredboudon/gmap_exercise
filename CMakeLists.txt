@@ -1,91 +1,15 @@
-# CMake entry point
-cmake_minimum_required (VERSION 4.0)
-project (gmap)
+cmake_minimum_required(VERSION 3.16)
+project(gmap LANGUAGES CXX)
 
-find_package(OpenGL REQUIRED)
+option(GMAP_SOLUTION "Build with the local instructor solution" OFF)
 
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS src/gmap_viewer.html)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/src/gmap_viewer.html" VIEWER_HTML)
+configure_file(src/gmap_viewer.hpp.in gmap_viewer.hpp @ONLY)
 
-if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
-    message( FATAL_ERROR "Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)" )
+add_executable(gmap src/gmap_helper.cpp src/gmap_main.cpp src/gmap_display.cpp)
+target_compile_features(gmap PRIVATE cxx_std_11)
+target_include_directories(gmap PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+if(GMAP_SOLUTION)
+    target_compile_definitions(gmap PRIVATE GMAP_SOLUTION)
 endif()
-if( CMAKE_SOURCE_DIR MATCHES " " )
-	message( "Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause." )
-endif()
-if( CMAKE_BINARY_DIR MATCHES " " )
-	message( "Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause." )
-endif()
-
-
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-endif()
-
-
-include_directories("$ENV{CONDA_PREFIX}/include" .)
-link_directories("$ENV{CONDA_PREFIX}/lib")
-
-set(CMAKE_INCLUDE_PATH "$ENV{CONDA_PREFIX}/include" ${CMAKE_INCLUDE_PATH})
-set(CMAKE_LIBRARY_PATH "$ENV{CONDA_PREFIX}/lib" ${CMAKE_LIBRARY_PATH})
-message(STATUS "Include" ${CMAKE_INCLUDE_PATH})
-
-set(ALL_LIBS
-	${OPENGL_LIBRARY}
-	glfw
-	GLEW
-)
-
-add_definitions(
-	-DTW_STATIC
-	-DTW_NO_LIB_PRAGMA
-	-DTW_NO_DIRECT3D
-	-DGLEW_STATIC
-	-D_CRT_SECURE_NO_WARNINGS
-	-DGLM_ENABLE_EXPERIMENTAL
-)
-
-# question 1
-add_executable(gmap 
-    src/gmap_helper.cpp
-    src/gmap_main.cpp
-    src/gmap_display.cpp
-    common/shader.cpp
-    common/shader.hpp
-    common/controls.cpp
-    common/controls.hpp
-    common/texture.cpp
-    common/texture.hpp
-    common/objloader.cpp
-    common/objloader.hpp
-    common/vboindexer.cpp
-    common/vboindexer.hpp    
-    src/vertex_shader.glsl
-    src/fragment_shader.glsl
-)
-target_link_libraries(gmap
-	${ALL_LIBS}
-)
-
-# Xcode and Visual working directories
-#set_target_properties(gmap PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-#create_target_launcher(gmap WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-
-
-SOURCE_GROUP(common REGULAR_EXPRESSION ".*/common/.*" )
-SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shader$" )
-
-
-if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
-add_custom_command(
-   TARGET gmap POST_BUILD
-   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/gmap${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-)
-
-
-elseif (${CMAKE_GENERATOR} MATCHES "Xcode" )
-
-endif (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
-

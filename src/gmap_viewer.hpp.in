@@ -1,0 +1,1 @@
+static const char viewer_html[] = R"gmap_html(@VIEWER_HTML@)gmap_html";

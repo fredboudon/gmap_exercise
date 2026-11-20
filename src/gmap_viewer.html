@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maillage de la G-carte</title>
+<style>
+  body { margin: 0; background: #15212d; color: #f2f6fa; font: 1rem system-ui; }
+  header { padding: 0.75rem 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+  canvas { display: block; width: 100%; height: 85vh; touch-action: none; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+  #status { margin: 0 1rem; }
+</style>
+<header>
+  <strong>Maillage de la G-carte</strong>
+  <label><input id="edges" type="checkbox" checked> Arêtes</label>
+  <span>Glisser pour tourner · Molette pour zoomer</span>
+</header>
+<p id="status" role="status"></p>
+<canvas id="mesh" aria-label="Vue 3D du maillage"></canvas>
+<script>
+function showMesh(vertices, faces) {
+    const canvas = document.querySelector('#mesh');
+    const status = document.querySelector('#status');
+    const edges = document.querySelector('#edges');
+    const gl = canvas.getContext('webgl2');
+    if (!gl) {
+        status.textContent = 'WebGL 2 est indisponible dans ce navigateur.';
+        return;
+    }
+
+    function compile(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            throw new Error(gl.getShaderInfoLog(shader));
+        }
+        return shader;
+    }
+
+    const program = gl.createProgram();
+    try {
+        gl.attachShader(program, compile(gl.VERTEX_SHADER, `#version 300 es
+            layout(location = 0) in vec3 position;
+            uniform vec2 angles;
+            uniform vec2 scale;
+            out vec3 viewPosition;
+            void main() {
+                float cy = cos(angles.x), sy = sin(angles.x);
+                float cx = cos(angles.y), sx = sin(angles.y);
+                vec3 p = vec3(cy*position.x + sy*position.z, position.y,
+                              -sy*position.x + cy*position.z);
+                viewPosition = vec3(p.x, cx*p.y - sx*p.z, sx*p.y + cx*p.z);
+                gl_Position = vec4(viewPosition.xy * scale, viewPosition.z * 0.5, 1);
+            }`));
+        gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `#version 300 es
+            precision highp float;
+            in vec3 viewPosition;
+            uniform bool outline;
+            out vec4 color;
+            void main() {
+                if (outline) {
+                    color = vec4(0.07, 0.13, 0.19, 1);
+                } else {
+                    vec3 normal = normalize(cross(dFdx(viewPosition), dFdy(viewPosition)));
+                    float light = 0.42 + 0.58 * abs(dot(normal, normalize(vec3(-0.4, 0.7, -1))));
+                    color = vec4(vec3(0.36, 0.79, 0.91) * light, 1);
+                }
+            }`));
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            throw new Error(gl.getProgramInfoLog(program));
+        }
+    } catch (error) {
+        status.textContent = 'Initialisation du rendu impossible. ' + error.message;
+        return;
+    }
+    gl.useProgram(program);
+
+    const low = vertices[0].slice();
+    const high = low.slice();
+    for (const vertex of vertices) {
+        for (let axis = 0; axis < 3; ++axis) {
+            low[axis] = Math.min(low[axis], vertex[axis]);
+            high[axis] = Math.max(high[axis], vertex[axis]);
+        }
+    }
+    const center = low.map((value, axis) => (value + high[axis]) / 2);
+    const radius = Math.hypot(...high.map((value, axis) => value - center[axis])) || 1;
+    const positions = vertices.flatMap(vertex =>
+        vertex.map((value, axis) => (value - center[axis]) / radius));
+
+    const triangles = [];
+    const lines = [];
+    for (const face of faces) {
+        // The exercise meshes have convex faces. Keep their boundary for the edge overlay.
+        for (let i = 1; i + 1 < face.length; ++i) {
+            triangles.push(face[0], face[i], face[i + 1]);
+        }
+        face.forEach((vertex, i) => lines.push(vertex, face[(i + 1) % face.length]));
+    }
+
+    function upload(target, data) {
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(target, buffer);
+        gl.bufferData(target, data, gl.STATIC_DRAW);
+        return buffer;
+    }
+
+    upload(gl.ARRAY_BUFFER, new Float32Array(positions));
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    const triangleBuffer = upload(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(triangles));
+    const lineBuffer = upload(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(lines));
+    const angles = gl.getUniformLocation(program, 'angles');
+    const scale = gl.getUniformLocation(program, 'scale');
+    const outline = gl.getUniformLocation(program, 'outline');
+
+    let yaw = 0.6;
+    let pitch = 0.45;
+    let zoom = 0.9;
+    let drag = null;
+    gl.enable(gl.DEPTH_TEST);
+    gl.clearColor(0.08, 0.13, 0.18, 1);
+    gl.polygonOffset(1, 1);
+
+    function draw() {
+        const width = Math.max(1, Math.round(canvas.clientWidth * devicePixelRatio));
+        const height = Math.max(1, Math.round(canvas.clientHeight * devicePixelRatio));
+        if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+        }
+        gl.viewport(0, 0, width, height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.uniform2f(angles, yaw, pitch);
+        gl.uniform2f(scale, zoom * Math.min(1, height / width), zoom * Math.min(1, width / height));
+        gl.uniform1i(outline, false);
+        gl.enable(gl.POLYGON_OFFSET_FILL);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, triangleBuffer);
+        gl.drawElements(gl.TRIANGLES, triangles.length, gl.UNSIGNED_INT, 0);
+        gl.disable(gl.POLYGON_OFFSET_FILL);
+        if (edges.checked) {
+            gl.uniform1i(outline, true);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lineBuffer);
+            gl.drawElements(gl.LINES, lines.length, gl.UNSIGNED_INT, 0);
+        }
+    }
+
+    canvas.addEventListener('pointerdown', event => {
+        if (!event.isPrimary || event.button !== 0) return;
+        drag = [event.clientX, event.clientY];
+        canvas.setPointerCapture(event.pointerId);
+    });
+    canvas.addEventListener('pointermove', event => {
+        if (!drag || !event.isPrimary) return;
+        yaw += (event.clientX - drag[0]) * 0.01;
+        pitch += (event.clientY - drag[1]) * 0.01;
+        drag = [event.clientX, event.clientY];
+        draw();
+    });
+    canvas.addEventListener('lostpointercapture', () => { drag = null; });
+    canvas.addEventListener('wheel', event => {
+        event.preventDefault();
+        zoom = Math.max(0.15, Math.min(5, zoom * Math.exp(-event.deltaY * 0.001)));
+        draw();
+    }, { passive: false });
+    edges.addEventListener('change', draw);
+    window.addEventListener('resize', draw);
+    status.textContent = vertices.length + ' sommets · ' + faces.length + ' faces';
+    draw();
+}
+</script>

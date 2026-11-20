@@ -11,3 +11,4 @@ build
 src/gmap
 src/gmap_solution.cpp
 src/gmap_solution.hpp
+/gmap-viewer.html

@@ -1,5 +1,6 @@
 #define GMAP_CORE
 #include "gmap.hpp"
+#include <cassert>
 
 void question1a(){
     GMap mgmap;
@@ -138,14 +139,14 @@ void question5(){
 }
 
 
-void question6a() {
+int question6a() {
     GMap3D mgmap = question4a();
-    display(mgmap);
+    return display(mgmap);
 }
 
-void question6b() {
+int question6b() {
     GMap3D mgmap = question4b();
-    display(mgmap);
+    return display(mgmap);
 }
 
 
@@ -179,8 +180,8 @@ int main(int argc, char ** argv){
     else CHECK("4a", question4a)
     else CHECK("4b", question4b)
     else CHECK("5", question5)
-    else CHECK("6a", question6a)
-    else CHECK("6b", question6b)
+    else if (strcmp(selection, "6a") == 0) return question6a();
+    else if (strcmp(selection, "6b") == 0) return question6b();
     else CHECK("7", question7)
     else {
             printf("Default question 1a. Unknown option :%s\n",selection);

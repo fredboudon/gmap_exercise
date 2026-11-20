@@ -4,13 +4,29 @@
 #include <vector>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
 
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
+struct vec3_t {
+    float coordinates[3];
 
-typedef glm::vec3 vec3_t;
+    vec3_t(float x = 0, float y = 0, float z = 0) : coordinates{x, y, z} {}
+
+    float operator[](std::size_t index) const { return coordinates[index]; }
+
+    vec3_t& operator+=(const vec3_t& other) {
+        coordinates[0] += other[0];
+        coordinates[1] += other[1];
+        coordinates[2] += other[2];
+        return *this;
+    }
+
+    vec3_t operator/(float divisor) const {
+        return vec3_t(coordinates[0] / divisor, coordinates[1] / divisor,
+                      coordinates[2] / divisor);
+    }
+};
 
 /*------------------------------------------------------------------------*/
 
@@ -145,22 +161,26 @@ public:
 
     /*
         Check if a dart of the orbit representing the vertex has already been 
-        associated with a value in propertydict. If yes, return this dart, else
+        associated with a value in properties. If yes, return this dart, else
         return the dart passed as argument.
     */
     id_t get_embedding_dart(id_t dart) const ;
 
 
 
-    // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
+    // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart)
     const T& get_property(id_t dart) const {
-
+        id_t d = get_embedding_dart(dart);
+        if (properties.count(d) == 0) { throw d; }
+        return properties.at(d);
     }
 
 
     // Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
     id_t set_property(id_t dart, T prop) {
-
+        id_t d = get_embedding_dart(dart);
+        properties[d] = prop;
+        return d;
     }
 
 protected:

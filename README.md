@@ -1,9 +1,14 @@
 Cartes Combinatoires
 ======================
 
-Le canevas du projet implémenant la structure de données GMap est dans le répertoire src. Comme les TPs précédents pour compiler le projet, dézippez le, créez un répertoire build et utilisez ```cmake ..```.
+Le canevas du TP se trouve dans `src/`. Pour le compiler, il faut un compilateur C++11 et CMake 3.16 ou plus récent.
 
-Les spécifications de la structure sont dans le fichier ```gmap.hpp```. Les fonctions a compléter sont dans ```gmap.cpp```. Les fonctions déja implémentées sont dans ```gmap_helper.cpp```. La fonction d'affichage (inspirée du TP précédent) est dans le fichier ```gmap_display.cpp```. Le fichier de test des différentes fonctions s'appelle ```gmap_main.cpp```. Ses fonctions sont nommées ```questionX``` et correspondent aux exercices qui suivent. Pour les tester, il suffit de les appeler dans la fonction ```main``` à la fin du fichier  ```gmap_main.cpp```.
+```sh
+cmake -S . -B build
+cmake --build build
+```
+
+Les spécifications se trouvent dans `src/gmap.hpp`. Les fonctions à compléter se trouvent dans `src/gmap.cpp` et les fonctions fournies dans `src/gmap_helper.cpp`. Lancez une question en passant son numéro à l’exécutable, par exemple `./build/gmap 1a`. Sous Windows, l’exécutable s’appelle `gmap.exe` et peut se trouver dans `build/Debug/` selon le générateur CMake.
 
 
 1/ La structure de 2-G-carte.
@@ -313,24 +318,18 @@ Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```
 
 6/ Visualisation
 ------------------------------------------
-Complétez la fonction ```display``` du ficher ```gmap_display.cpp``` permettant de visualiser la carte simplement comme un ensemble de faces.
+La fonction `extract_mesh` de `src/gmap_display.cpp` montre comment convertir la G-carte en un maillage indexé. Elle associe un indice à chaque sommet plongé, puis parcourt chaque face avec `orderedorbit({0, 1}, dart)`. En prenant un brin sur deux dans cette orbite, on obtient les indices du contour dans le bon ordre.
 
-```c++
-int display(const GMap3D& gmap)
-```
-Il faut transformer la gmap en liste de sommet et d'indices. 
-A noter  que les faces dans les exemples sont des quadrilatère qu'il vous faudra transformer en triangle ([a,b,c,d] -> [a,b,c]+[a,c,d]). Chaque arête étant représenté par 2 brins, il ne faudra considérer qu'un brin sur 2 pour déterminer les positions. A noter également qu'il vous faut calculer les normales de chaque faces. La valeur de propriété de chaque vertex peut pour l'instant etre définie aléatoirement pour la visualisation.
+Une fois les orbites, le plongement et la couture implémentés, lancez les questions 6a et 6b.
 
-```c++
-    std::vector<unsigned short> indices; //Triangles concaténés dans une liste
-    std::vector<glm::vec3> indexed_vertices;
-    std::vector<glm::vec3> indexed_normals;
-    std::vector<unsigned int> property;
+```sh
+./build/gmap 6a  # Cube
+./build/gmap 6b  # Cube troué
 ```
 
+Chaque commande écrit `gmap-viewer.html` dans le répertoire courant et l’ouvre avec l’application associée aux fichiers HTML. Si l’ouverture automatique échoue, ouvrez le fichier dans un navigateur compatible WebGL 2. Le fichier fonctionne hors ligne et contient la géométrie et le visualiseur. Faites glisser le maillage pour le tourner et utilisez la molette pour zoomer.
 
-Vous pourrez alors tester la visualization du cube et du cube troué avec ```question6a``` et ```question6b```. 
-
+Le visualiseur triangule les faces convexes pour le rendu et affiche les contours polygonaux d’origine. La triangulation en éventail convient aux faces des deux exemples.
 
 7/ Le dual d’une 2-G-Carte.
 ------------------------------------------------------------------------------------
