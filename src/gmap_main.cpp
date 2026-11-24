@@ -1,6 +1,8 @@
-#define GMAP_CORE
 #include "gmap.hpp"
+#include <algorithm>
 #include <cassert>
+#include <stdexcept>
+#include <string>
 
 void question1a(){
     GMap mgmap;
@@ -84,32 +86,56 @@ void question1d(){
     printf("is_valid seems valid\n");
 }
 
-template<class T>
-void print_array(T array, const char * numtype = "%i"){
-    printf("[");
-    if (!array.empty()){
-        if (array.size() > 1){
-            for (typename T::const_iterator it = array.begin(); it != array.end()-1 ; ++it){
-                printf(numtype,*it);
-                printf(",");
-            }
-        }
-        printf(numtype,*(array.end()-1));
+void question2a()
+{
+    const GMap square = GMap::square();
 
+    auto vertex = square.orbit({1, 2}, 0);
+    std::sort(vertex.begin(), vertex.end());
+    if (vertex != GMap::idlist_t{0, 7}) {
+        throw std::logic_error("Question 2a : l’orbite de sommet {1,2} depuis 0 doit contenir 0 et 7 une seule fois.");
     }
-    printf("]");
+
+    auto face = square.orbit({0, 1}, 0);
+    std::sort(face.begin(), face.end());
+    if (face != GMap::idlist_t{0, 1, 2, 3, 4, 5, 6, 7}) {
+        throw std::logic_error("Question 2a : l’orbite de face {0,1} depuis 0 doit contenir les huit brins une seule fois.");
+    }
+
+    if (square.orbit({2}, 3) != GMap::idlist_t{3}) {
+        throw std::logic_error("Question 2a : alpha_2 fixe le brin 3 du carré. Son orbite doit contenir seulement 3.");
+    }
+    std::puts("Question 2a réussie : orbites du carré.");
 }
 
-void question2(){
-    GMap mgmap = GMap::square();
-    mgmap.print_alphas();
-    std::vector<unsigned int> expected = {4,4,1};
-    for (unsigned int i = 0 ; i < 3 ; ++i) {
-        GMap::idlist_t ielements = mgmap.elements(i);
-        printf( "Element de degree %i :",i);
-        print_array(ielements);
-        printf("\n");
-        assert(ielements.size() == expected[i]);
+void question2b()
+{
+    const GMap square = GMap::square();
+    if (square.orderedorbit({0, 1}, 0) != GMap::idlist_t{0, 1, 2, 3, 4, 5, 6, 7}) {
+        throw std::logic_error("Question 2b : parcours {0,1} depuis 0 attendu [0,1,2,3,4,5,6,7].");
+    }
+    if (square.orderedorbit({1, 0}, 3) != GMap::idlist_t{3, 4, 5, 6, 7, 0, 1, 2}) {
+        throw std::logic_error("Question 2b : parcours {1,0} depuis 3 attendu [3,4,5,6,7,0,1,2].");
+    }
+    std::puts("Question 2b réussie : orbites ordonnées du carré.");
+}
+
+void question2c()
+{
+    const GMap square = GMap::square();
+    const std::size_t expected[] = {4, 4, 1};
+    for (GMap::degree_t degree : {0, 1, 2}) {
+        const auto elements = square.elements(degree);
+        if (elements.size() != expected[degree]) {
+            throw std::logic_error("Question 2c : degré " + std::to_string(degree) +
+                                   ", attendu " + std::to_string(expected[degree]) +
+                                   ", obtenu " + std::to_string(elements.size()) + ".");
+        }
+        std::printf("Cellules de degré %d :", degree);
+        for (auto dart : elements) {
+            std::printf(" %lu", dart);
+        }
+        std::puts("");
     }
 }
 
@@ -171,21 +197,28 @@ int main(int argc, char ** argv){
         selection = argv[1];
     }
 
-    CHECK("1a", question1a)
-    else CHECK("1b", question1b)
-    else CHECK("1c", question1c)
-    else CHECK("1d", question1d)
-    else CHECK("2", question2)
-    else CHECK("3", question3)
-    else CHECK("4a", question4a)
-    else CHECK("4b", question4b)
-    else CHECK("5", question5)
-    else if (strcmp(selection, "6a") == 0) return question6a();
-    else if (strcmp(selection, "6b") == 0) return question6b();
-    else CHECK("7", question7)
-    else {
+    try {
+        CHECK("1a", question1a)
+        else CHECK("1b", question1b)
+        else CHECK("1c", question1c)
+        else CHECK("1d", question1d)
+        else CHECK("2a", question2a)
+        else CHECK("2b", question2b)
+        else CHECK("2c", question2c)
+        else CHECK("3", question3)
+        else CHECK("4a", question4a)
+        else CHECK("4b", question4b)
+        else CHECK("5", question5)
+        else if (strcmp(selection, "6a") == 0) return question6a();
+        else if (strcmp(selection, "6b") == 0) return question6b();
+        else CHECK("7", question7)
+        else {
             printf("Default question 1a. Unknown option :%s\n",selection);
             question1a();
         }
+    } catch (const std::logic_error& error) {
+        std::fprintf(stderr, "%s\n", error.what());
+        return 1;
+    }
     return 0;
 }

@@ -1,4 +1,4 @@
-
+#pragma once
 #include  <unordered_map>
 #include  <unordered_set>
 #include <vector>
@@ -150,60 +150,17 @@ protected:
 /*------------------------------------------------------------------------*/
 
 
-template<class T>
-class EmbeddedGMap : public GMap {
-public:
-    typedef T property_t;
-    typedef std::unordered_map<id_t, property_t> idpropmap_t;
-
-    EmbeddedGMap() {}
-    ~EmbeddedGMap() {}
-
-    /*
-        Check if a dart of the orbit representing the vertex has already been 
-        associated with a value in properties. If yes, return this dart, else
-        return the dart passed as argument.
-    */
-    id_t get_embedding_dart(id_t dart) const ;
-
-
-
-    // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart)
-    const T& get_property(id_t dart) const {
-        id_t d = get_embedding_dart(dart);
-        if (properties.count(d) == 0) { throw d; }
-        return properties.at(d);
-    }
-
-
-    // Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
-    id_t set_property(id_t dart, T prop) {
-        id_t d = get_embedding_dart(dart);
-        properties[d] = prop;
-        return d;
-    }
-
-protected:
-
-    idpropmap_t properties;
-};
-
-
-
-
-/*------------------------------------------------------------------------*/
-
-
-/* 
-    The GMap3D extent GMap class with embedding.
-    The property added is an index of position.
-    A list of indexed position is also maintained.
-*/ 
-class GMap3D : public EmbeddedGMap<id_t> {
+// A geometric G-map stores one position index per embedded vertex.
+class GMap3D : public GMap {
 public:
 
     GMap3D();
     ~GMap3D();
+
+    // Find the dart carrying the vertex embedding, or return dart if none exists.
+    id_t get_embedding_dart(id_t dart) const;
+    const id_t& get_property(id_t dart) const;
+    id_t set_property(id_t dart, id_t position_index);
 
     // Print for each dart, the value of the different alpha applications.
     void print_alphas();
@@ -239,18 +196,9 @@ public:
 
     std::vector<vec3_t> positions;
 
+protected:
+    std::unordered_map<id_t, id_t> properties;
 };
 
 
 int display(const GMap3D& gmap);
-
-/*------------------------------------------------------------------------*/
-
-// #define GMAP_SOLUTION
-
-
-#ifdef GMAP_SOLUTION
-#include "gmap_solution.cpp"
-#else
-#include "gmap.cpp"
-#endif

@@ -1,5 +1,6 @@
-// #include "gmap.hpp"
-#ifdef GMAP_CORE
+#include "gmap.hpp"
+#include <stdexcept>
+
 /*------------------------------------------------------------------------*/
 
 /* 
@@ -9,6 +10,7 @@
 */
 GMap::id_t GMap::add_dart()
 {
+    throw std::logic_error("Question 1a : add_dart reste à implémenter.");
 }
 
 /*------------------------------------------------------------------------*/
@@ -17,11 +19,13 @@ GMap::id_t GMap::add_dart()
 // Return the application of the alpha_deg on dart
 GMap::id_t GMap::alpha(degree_t degree, id_t dart) const
 {
+    throw std::logic_error("Question 1b : alpha (un seul degré) reste à implémenter.");
 }
 
 // Return the application of a composition of alphas on dart
 GMap::id_t GMap::alpha(degreelist_t degrees, id_t dart) const
 {
+    throw std::logic_error("Question 1b : alpha (composition) reste à implémenter.");
 }
 
 
@@ -63,6 +67,7 @@ bool GMap::is_valid() const
 */
 GMap::idlist_t GMap::orbit(const degreelist_t& alphas, id_t dart) const
 {
+    throw std::logic_error("Question 2a : orbit reste à implémenter.");
 }
 
 /*
@@ -73,8 +78,22 @@ GMap::idlist_t GMap::orbit(const degreelist_t& alphas, id_t dart) const
 */
 GMap::idlist_t GMap::orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart) const
 {
+    throw std::logic_error("Question 2b : orderedorbit reste à implémenter.");
 }
 
+
+/*
+    Check if a dart of the orbit representing the vertex has already been
+    associated with a value in propertydict. If yes, return this dart, else
+    return the dart passed as argument.
+*/
+
+
+
+GMap::id_t GMap3D::get_embedding_dart(id_t dart) const
+{
+    throw std::logic_error("Question 3 : get_embedding_dart reste à implémenter.");
+}
 
 /*
     Sew two elements of degree 'degree' that start at dart1 and dart2.
@@ -93,35 +112,15 @@ int GMap::eulercharacteristic() const
     return 0;
 }
 
-#endif
 /*------------------------------------------------------------------------*/
 
 
-/*
-    Check if a dart of the orbit representing the vertex has already been 
-    associated with a value in propertydict. If yes, return this dart, else
-    return the dart passed as argument.
-*/
-
-
-
-template<class T>
-GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) const
-{
-    // TOCOMPLETE
-    return dart;
-}
-
-
 /*------------------------------------------------------------------------*/
-
-#ifdef GMAP_CORE
 
 GMap3D GMap3D::dual()
 {
+    throw std::logic_error("Question 7 : dual reste à implémenter.");
 }
 
 
 /*------------------------------------------------------------------------*/
-
-#endif

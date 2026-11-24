@@ -8,7 +8,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-Les spécifications se trouvent dans `src/gmap.hpp`. Les fonctions à compléter se trouvent dans `src/gmap.cpp` et les fonctions fournies dans `src/gmap_helper.cpp`. Lancez une question en passant son numéro à l’exécutable, par exemple `./build/gmap 1a`. Sous Windows, l’exécutable s’appelle `gmap.exe` et peut se trouver dans `build/Debug/` selon le générateur CMake.
+Les spécifications se trouvent dans `src/gmap.hpp`. Les fonctions à compléter se trouvent dans `src/gmap.cpp` et les fonctions fournies dans `src/gmap_helper.cpp`. Lancez une question en passant son numéro à l’exécutable, par exemple `./build/gmap 1a`. Dans la suite, `gmap X` désigne la commande à lancer si l’exécutable est dans le PATH. Sinon, utilisez `./build/gmap X` depuis la racine du dépôt. Sous Windows, l’exécutable s’appelle `gmap.exe` et peut se trouver dans `build/Debug/` selon le générateur CMake.
 
 
 1/ La structure de 2-G-carte.
@@ -72,7 +72,7 @@ Complétez les fonctions suivantes dans le fichier ```gmap.cpp```
     id_t add_dart();
 
 ```
-Une fois completée, vous pouvez tester cette structure avec la function ```question1a``` du fichier ```gmap_main.cpp```.
+Testez avec la fonction `question1a` de `gmap_main.cpp` ou la commande `gmap 1a`.
 
 ```c++
     // Return the application of the alpha_deg on dart
@@ -86,14 +86,14 @@ Une fois completée, vous pouvez tester cette structure avec la function ```ques
     bool is_free(degree_t degree, id_t dart) const;
 ```
 
-A tester avec la function ```question1b``` du fichier ```gmap_main.cpp```.
+Testez avec la fonction `question1b` de `gmap_main.cpp` ou la commande `gmap 1b`.
 
 ```c++
     // Link the two darts with a relation alpha_degree if they are both free.
     bool link_darts(degree_t degree, id_t dart1, id_t dart2); 
 ```
 
-A tester avec la function ```question1c``` du fichier ```gmap_main.cpp```.
+Testez avec la fonction `question1c` de `gmap_main.cpp` ou la commande `gmap 1c`.
 
 ```c++
     /*
@@ -106,7 +106,7 @@ A tester avec la function ```question1c``` du fichier ```gmap_main.cpp```.
 
 ```
 
-A tester avec la function ```question1d``` du fichier ```gmap_main.cpp```.
+Testez avec la fonction `question1d` de `gmap_main.cpp` ou la commande `gmap 1d`.
 
 
 2/ Les parcours de la structure
@@ -119,7 +119,7 @@ Complétez les fonctions de parcours par calcul d'orbite.
         Return the orbit of dart using a list of alpha relation.
         Example of use : gmap.orbit({0,1}, 0).
     */
-    idlist_t orbit(degreelist_t alphas, id_t dart);
+    idlist_t orbit(const degreelist_t& alphas, id_t dart) const;
     /*
     Canvas:
     {
@@ -143,7 +143,7 @@ Complétez les fonctions de parcours par calcul d'orbite.
         Example of use. gmap.orderedorbit({0,1}, 0).
         Warning: No fixed point for the given alpha should be contained.
     */
-    idlist_t orderedorbit(degreelist_t list_of_alpha_value, id_t dart);
+    idlist_t orderedorbit(const degreelist_t& list_of_alpha_value, id_t dart) const;
     /*
     Canvas:
     {
@@ -151,7 +151,7 @@ Complétez les fonctions de parcours par calcul d'orbite.
         id_t current_dart = dart;
         unsigned char current_alpha_index = 0;
         size_t n_alpha = list_of_alpha_value.size();
-        # Tant que current_dart est different de dart
+        # Répéter au moins une fois, puis jusqu’au retour au brin de départ
             # ajouter current_dart au resultat
             # prendre le prochain alpha de list_of_alpha_value avec current_alpha_index
             # incrémenter current_alpha_index
@@ -161,6 +161,9 @@ Complétez les fonctions de parcours par calcul d'orbite.
     }    
     */
 ```
+
+- **`question2a` ou `gmap 2a`** vérifie directement `orbit` sur un carré. L’orbite de sommet contient les brins 0 et 7, l’orbite de face contient les huit brins et l’orbite d’un brin fixé par `alpha_2` contient ce seul brin. L’ordre de retour est libre et chaque brin doit apparaître une seule fois.
+- **`question2b` ou `gmap 2b`** vérifie directement `orderedorbit`. Depuis le brin 0 avec `{0,1}`, le parcours attendu est `[0,1,2,3,4,5,6,7]`. Le test change aussi le brin de départ et l’ordre des relations.
 
 Cela permettra de faire marcher la fonction ```elements``` qui détermine les i-cellules de la carte.
 
@@ -185,87 +188,23 @@ GMap::idlist_t GMap::elements( degree_t degree) {
 }
 ```
 
-Vous pouvez tester cette structure avec la fonction ```question2```.
+La fonction `question2c` ou la commande `gmap 2c` vérifie que `elements` trouve 4 sommets, 4 arêtes et 1 face.
 
 3/ Le plongement géométrique
 ------------------------------------------
 
-La classe GMap est sous classée en GMap3D pour intégrer le plongement géométrique.
+La classe `GMap3D` hérite de `GMap` et ajoute le plongement des sommets. Les coordonnées sont stockées dans le tableau `positions`. Le dictionnaire `properties` associe un brin représentant le sommet à un indice dans ce tableau.
 
+Complétez la méthode suivante dans `src/gmap.cpp`, avec les autres fonctions du TP.
 
-```c++
-template<class T>
-class EmbeddedGMap : public GMap {
-public:
-    typedef T property_t;
-    typedef std::unordered_map<id_t, property_t> idpropmap_t;
-
-    EmbeddedGMap() {}
-    ~EmbeddedGMap() {}
-
-    /*
-        Check if a dart of the orbit representing the vertex has already been 
-        associated with a value in propertydict. If yes, return this dart, else
-        return the dart passed as argument.
-    */
-    id_t get_embedding_dart(id_t dart) ;
-
-
-
-    // Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
-    const T& get_property(id_t dart) ;
-
-
-    // Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
-    id_t set_property(id_t dart, T prop) ;
-
-protected:
-
-    // A map that associate a property to each dart.
-    idpropmap_t properties;
-};
-
-/* 
-    The GMap3D extent GMap class with embedding.
-    The property added is an index of position.
-    A list of indexed position is also maintained.
-*/
-class GMap3D : public EmbeddedGMap<id_t> {
-public:
-
-    ...
-
-    // A new indexed position is added to the list
-    // The index is associated to the dart.
-    void set_position(id_t dart, vec3_t pos) {
-        id_t pid = positions.size();
-        positions.push_back(pos);
-        set_property(dart, pid);
-    }
-
-    // A vector of indexed position
-    std::vector<vec3_t> positions;
-
-};
+```cpp
+GMap::id_t GMap3D::get_embedding_dart(id_t dart) const
 ```
 
-Implementer la fonction qui permet de determiner le brin qui contient l'information de plongement pour une i-cellule donnée. Pour cela, il vous faut parcourir l'orbite de la i-cellule et vérifier si chaque brin n'a pas de valeur dans le dictionnaire de valeur de plongement.  Grace a cela, les fonctions ```get_position``` et ```set_position``` permettront d'associer une position à une 0-cellule.
+Parcourez l’orbite `{1, 2}` de `dart`. Si un brin de cette orbite possède une entrée dans `properties`, renvoyez ce brin. Si aucun n’en possède, renvoyez `dart`. Les méthodes fournies `get_property` et `set_property` utilisent ce représentant pour lire ou écrire l’indice de la position.
 
-A noter que cette fonction est dans le fichier ```gmap.hpp```.
+Après recompilation, testez avec la fonction `question3` ou la commande `gmap 3`. Sur le carré, les brins 0 et 7 appartiennent au même sommet et retrouvent la position stockée sur le brin 0.
 
-```c++
-template<class T>
-GMap::id_t EmbeddedGMap<T>::get_embedding_dart(id_t dart) 
-/*
-Canvas
-{
-    Tester pour chaque brin de l'orbit<1,2> de dart s'il possede une propriété dans properties.
-    Si oui, le retourner.
-    Si aucun brin de l'orbite n'a de propriété, retourner dart.
-}
-*/
-```
-Vous pourrez tester cela avec la fonction ```question3``` qui associe des coordonnées aux sommets d'un carré.
 
 4/ La couture permettant de lier deux éléments de degrée ‘degree’. 
 ------------------------------------------------------------------------------------
@@ -298,7 +237,7 @@ Canvas:
 */
 ```
 
-Vous pouvez maintenant tester la création d'un cube et d'un cube troué (holeshape) avec les fonctions ```question4a``` et ```question4b```.
+Testez le cube avec `question4a` ou `gmap 4a`, et le cube troué avec `question4b` ou `gmap 4b`.
 
 5/ Caractéristique d’Euler-Poincaré (S-A+F)
 ------------------------------------------------------------------------------------
@@ -313,14 +252,14 @@ Canvas:
     return S - A + F
 }
 ```
-Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```question5```.
+Testez la caractéristique du cube avec `question5` ou `gmap 5`.
 
 
 6/ Visualisation
 ------------------------------------------
 La fonction `extract_mesh` de `src/gmap_display.cpp` montre comment convertir la G-carte en un maillage indexé. Elle associe un indice à chaque sommet plongé, puis parcourt chaque face avec `orderedorbit({0, 1}, dart)`. En prenant un brin sur deux dans cette orbite, on obtient les indices du contour dans le bon ordre.
 
-Une fois les orbites, le plongement et la couture implémentés, lancez les questions 6a et 6b.
+Une fois les orbites, le plongement et la couture implémentés, testez la visualisation du cube avec `question6a` ou `gmap 6a`, et celle du cube troué avec `question6b` ou `gmap 6b`.
 
 ```sh
 ./build/gmap 6a  # Cube
@@ -354,7 +293,7 @@ Canvas:
 }
 ```
 
-Vous pourrez tester cette fonction sur la structure de cube avec la fonction ```question7```.
+Testez le dual du cube avec `question7` ou `gmap 7`.
 
 8/ Comparaison avec des structures alternatives
 ------------------------------------------------------------------------------------
@@ -364,3 +303,16 @@ Qu'est ce que vous y gagneriez ? perdriez ?
 
 Comparez cette structure avec une structure Half-Edge ? Avec une simple liste de points indexés ?
 
+
+
+Compilation avec le corrigé local
+------------------------------------------
+
+Si vous disposez de `src/gmap_solution.cpp`, activez l’option suivante pour compiler le corrigé dans un répertoire distinct.
+
+```sh
+cmake -S . -B build/solution -DGMAP_SOLUTION=ON
+cmake --build build/solution
+```
+
+Le corrigé est un fichier source à part entière. Pour adapter une ancienne copie, incluez `gmap.hpp` en tête, retirez les blocs conditionnels `GMAP_CORE` en conservant leur contenu et transformez la définition template du plongement en `GMap::id_t GMap3D::get_embedding_dart(id_t dart) const`.

@@ -67,6 +67,22 @@ GMap3D::GMap3D() {}
 GMap3D::~GMap3D() { }
 
 
+const GMap::id_t& GMap3D::get_property(id_t dart) const
+{
+    const auto embedding_dart = get_embedding_dart(dart);
+    if (properties.count(embedding_dart) == 0) {
+        throw embedding_dart;
+    }
+    return properties.at(embedding_dart);
+}
+
+GMap::id_t GMap3D::set_property(id_t dart, id_t position_index)
+{
+    const auto embedding_dart = get_embedding_dart(dart);
+    properties[embedding_dart] = position_index;
+    return embedding_dart;
+}
+
 void GMap3D::print_alphas() {
     for(id_t d : darts())
     {
