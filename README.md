@@ -308,11 +308,13 @@ Comparez cette structure avec une structure Half-Edge ? Avec une simple liste de
 Compilation avec le corrigé local
 ------------------------------------------
 
-Si vous disposez de `src/gmap_solution.cpp`, activez l’option suivante pour compiler le corrigé dans un répertoire distinct.
+Pour compiler le corrigé, clonez le dépôt privé `gmap_exercise-solutions` à côté du dépôt du TP. Depuis la racine de `gmap_exercise`, configurez un répertoire de compilation distinct.
 
 ```sh
 cmake -S . -B build/solution -DGMAP_SOLUTION=ON
 cmake --build build/solution
 ```
 
-Le corrigé est un fichier source à part entière. Pour adapter une ancienne copie, incluez `gmap.hpp` en tête, retirez les blocs conditionnels `GMAP_CORE` en conservant leur contenu et transformez la définition template du plongement en `GMap::id_t GMap3D::get_embedding_dart(id_t dart) const`.
+CMake compile directement `../gmap_exercise-solutions/gmap_solution.cpp`. Modifiez ce fichier dans le dépôt privé, puis relancez `cmake --build build/solution`.
+
+Si le corrigé se trouve ailleurs, indiquez son chemin avec `-DGMAP_SOLUTION_FILE=/chemin/vers/gmap_solution.cpp` à la configuration. Pour adapter une ancienne copie, incluez `gmap.hpp` en tête, retirez les blocs conditionnels `GMAP_CORE` en conservant leur contenu et transformez la définition template du plongement en `GMap::id_t GMap3D::get_embedding_dart(id_t dart) const`.
