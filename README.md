@@ -1,6 +1,8 @@
 Cartes Combinatoires
 ======================
 
+Retrouvez les questions du TP et les corrigés dévoilés sur la [page étudiante](https://fredboudon.github.io/gmap_exercise/).
+
 Le canevas du TP se trouve dans `src/`. Pour le compiler, il faut un compilateur C++11 et CMake 3.16 ou plus récent.
 
 ```sh
