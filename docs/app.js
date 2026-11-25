@@ -48,9 +48,13 @@ async function loadSolutions() {
         const response = await fetch(new URL('/api/solutions', apiBase), {cache: 'no-store'});
         if (!response.ok) throw new Error('Service indisponible.');
         const {solutions} = await response.json();
-        for (const {id, code} of solutions) {
-            const box = boxes.get(id);
-            if (!box || typeof code !== 'string') continue;
+        const published = new Map(solutions.map(({id, code}) => [id, code]));
+        for (const [id, box] of boxes) {
+            const code = published.get(id);
+            if (typeof code !== 'string') {
+                box.textContent = 'Corrigé à venir';
+                continue;
+            }
             const details = document.createElement('details');
             details.open = box.querySelector('details')?.open ?? false;
             const summary = document.createElement('summary');
