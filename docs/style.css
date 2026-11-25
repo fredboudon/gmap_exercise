@@ -1,0 +1,17 @@
+:root { color-scheme: light; font: 1rem/1.6 system-ui, sans-serif; color: #162536; background: #f3f6fb; }
+body { margin: 0; }
+main { width: min(52rem, calc(100% - 2rem)); margin: 2.5rem auto 4rem; }
+header { background: #122c4a; color: #fff; border-radius: 1rem; padding: clamp(1.25rem, 5vw, 3rem); }
+header a { color: #bfe8ff; }
+.course { color: #bfe8ff; font-size: .875rem; letter-spacing: .08em; font-weight: 700; }
+h1 { font-size: clamp(2rem, 7vw, 3.6rem); line-height: 1.1; margin: .35em 0; }
+.section-title { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+h2, h3 { margin: 0; }
+button { font: inherit; cursor: pointer; color: #173b60; background: white; border: 1px solid #788aa1; border-radius: .45rem; padding: .35rem .7rem; }
+button:disabled { cursor: default; opacity: .65; }
+article { margin: .9rem 0; padding: 1rem 1.2rem; background: #fff; border-radius: .65rem; border: 1px solid #ccd8e5; }
+article p { margin: .4rem 0; }
+.question-id { color: #265e94; font-variant-numeric: tabular-nums; padding-right: .55em; }
+.solution { margin-top: .75rem; padding: .6rem .8rem; background: #edf3fa; border-radius: .4rem; }
+pre { white-space: pre; overflow: auto; max-height: 26rem; background: #122c4a; color: #fff; padding: 1rem; border-radius: .4rem; }
+summary { cursor: pointer; font-weight: 650; }
